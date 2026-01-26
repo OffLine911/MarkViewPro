@@ -57,8 +57,13 @@ jobs:
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - name: Build
+      - name: Build (Windows with NSIS)
+        if: matrix.os == 'windows-latest'
         run: wails build -platform ${{ matrix.platform }}/amd64 -nsis
+
+      - name: Build (macOS/Linux)
+        if: matrix.os != 'windows-latest'
+        run: wails build -platform ${{ matrix.platform }}/amd64
 
       - name: Upload artifact (Windows)
         if: matrix.os == 'windows-latest'
