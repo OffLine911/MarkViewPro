@@ -5,6 +5,129 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-01-26
+
+### 🎉 Major Features Added
+
+#### 1. Split View Editor with Monaco
+- **Full Monaco Editor Integration**: Professional code editor with syntax highlighting
+- **Three View Modes**: Preview-only, Editor-only, and Split view
+- **Resizable Split Pane**: Drag the divider to adjust editor/preview ratio
+- **Real-time Sync**: Changes in editor instantly reflect in preview
+- **Advanced Editor Features**:
+  - Minimap for quick navigation
+  - Line numbers and code folding
+  - Bracket pair colorization
+  - IntelliSense and auto-completion
+  - Multiple cursors support
+- **Keyboard Shortcut**: `Ctrl+\` to toggle split view
+- **New Components**: `MarkdownEditor.tsx`, `SplitView.tsx`, `ViewModeToggle.tsx`
+
+#### 2. Mermaid Diagram Support
+- **Automatic Diagram Rendering**: All mermaid code blocks render as diagrams
+- **Comprehensive Diagram Types**:
+  - Flowcharts and flow diagrams
+  - Sequence diagrams
+  - Pie charts and bar charts
+  - State diagrams
+  - Gantt charts
+  - Class diagrams
+  - Entity relationship diagrams
+  - User journey diagrams
+- **Dark Theme Integration**: Diagrams styled to match app theme
+- **Error Handling**: Helpful error messages for invalid syntax
+- **New Component**: `MermaidDiagram.tsx`
+
+#### 3. Command Palette
+- **Quick Command Access**: Press `Ctrl+Shift+P` to open
+- **Fuzzy Search**: Type to filter commands instantly
+- **Keyboard Navigation**: Arrow keys + Enter to execute
+- **17+ Commands Available**:
+  - File operations (Open, Save, New)
+  - View mode switching (Preview, Editor, Split)
+  - Export functions (PDF, HTML)
+  - Zoom controls
+  - Settings and preferences
+  - Sidebar and fullscreen toggles
+- **Categorized Commands**: File, View, Export, Other
+- **Shortcut Display**: Shows keyboard shortcuts for each command
+- **New Component**: `CommandPalette.tsx`
+
+#### 4. Folder/Project Support
+- **Open Entire Folders**: Work with multiple markdown files as a project
+- **File Tree Navigation**: Browse files in hierarchical tree structure
+- **Recursive Scanning**: Automatically finds all markdown files
+- **Smart Filtering**: Shows only .md and .markdown files
+- **Expandable/Collapsible Folders**: Clean navigation with folder icons
+- **File Selection Highlighting**: Visual feedback for active file
+- **Max Depth Control**: Configurable folder depth (default: 3 levels)
+- **Keyboard Shortcut**: `Ctrl+Shift+O` to open folder
+- **New Backend**: `internal/foldermanager/foldermanager.go`
+- **New Component**: `FileTree.tsx`
+- **Sidebar Integration**: New "Files" tab in sidebar
+
+#### 5. Image Paste & Management
+- **Clipboard Paste**: Copy any image and paste directly with `Ctrl+V`
+- **Drag & Drop Images**: Drag image files into the app
+- **Auto-Save to Assets**: Images automatically saved to `assets/` folder
+- **Unique Filenames**: Timestamp-based naming prevents conflicts
+- **Automatic Markdown Insertion**: Image syntax inserted at cursor position
+- **Format Support**: PNG, JPG, JPEG, GIF, WebP
+- **Smart Path Management**: Relative paths for portability
+- **New Backend**: `internal/imagemanager/imagemanager.go`
+- **Seamless Integration**: Works in Editor and Split view modes
+
+### Added
+- **New Dependencies**:
+  - `monaco-editor` (^0.45.0) - Professional code editor
+  - `@monaco-editor/react` (^4.6.0) - React wrapper for Monaco
+  - `mermaid` (^10.6.1) - Diagram rendering library
+- **New Backend Packages**:
+  - `internal/foldermanager` - Folder operations and tree building
+  - `internal/imagemanager` - Image handling and asset management
+- **New Frontend Components**:
+  - `components/Editor/MarkdownEditor.tsx` - Monaco editor wrapper
+  - `components/SplitView/SplitView.tsx` - Split view container
+  - `components/Toolbar/ViewModeToggle.tsx` - View mode switcher
+  - `components/CommandPalette/CommandPalette.tsx` - Command palette UI
+  - `components/FileTree/FileTree.tsx` - File tree navigation
+  - `components/Viewer/MermaidDiagram.tsx` - Mermaid renderer
+- **New Wails Bindings**:
+  - `OpenFolder()` - Open folder dialog
+  - `GetFolderTree()` - Get file tree structure
+  - `ReadFileFromFolder()` - Read file from folder
+  - `SavePastedImage()` - Save base64 image data
+  - `CopyImageToAssets()` - Copy image file to assets
+- **Enhanced Keyboard Shortcuts**:
+  - `Ctrl+Shift+P` - Open command palette
+  - `Ctrl+\` - Toggle split view
+  - `Ctrl+Shift+O` - Open folder
+- **View Mode State Management**: Track and persist view preferences
+- **Tab Content Updates**: Support for editing in tabs
+- **Status Bar Enhancement**: Shows current view mode
+
+### Changed
+- **App.tsx**: Complete rewrite to integrate all new features
+- **Sidebar**: Added "Files" tab for folder navigation
+- **StatusBar**: Added view mode indicator
+- **useTabs Hook**: Added `updateTabContent()` method for editor changes
+- **wailsBindings**: Extended with new backend methods
+- **MarkdownViewer**: Enhanced to detect and render mermaid blocks
+
+### Technical
+- **Architecture**: Clean separation between view modes
+- **State Management**: Centralized view mode and folder state
+- **Performance**: Optimized Monaco editor loading
+- **Error Handling**: Comprehensive error handling for all new features
+- **Type Safety**: Full TypeScript coverage for new components
+- **Documentation**: Added `NEW_FEATURES_SUMMARY.md` and `FEATURES_IMPLEMENTATION.md`
+
+### Developer Experience
+- **Demo File**: Created `DEMO.md` with examples of all features
+- **Implementation Guide**: Detailed integration steps
+- **Code Organization**: Modular component structure
+- **Testing Ready**: All features ready for testing
+
 ## [1.2.4] - 2026-01-26
 
 ### Fixed
