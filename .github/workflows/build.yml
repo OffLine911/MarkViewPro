@@ -1,0 +1,105 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            artifact: MarkViewPro.exe
+          - os: macos-latest
+            platform: darwin
+            artifact: MarkViewPro.app
+          - os: ubuntu-latest
+            platform: linux
+            artifact: MarkViewPro
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Wails
+        uses: dAppServer/wails-build-action@v2.2
+        with:
+          build-name: MarkViewPro
+          build-platform: ${{ matrix.platform }}/amd64
+
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Build
+        run: wails build -platform ${{ matrix.platform }}/amd64
+
+      - name: Upload artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkViewPro-windows
+          path: build/bin/MarkViewPro.exe
+
+      - name: Upload artifact (macOS)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkViewPro-macos
+          path: build/bin/MarkViewPro.app
+
+      - name: Upload artifact (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkViewPro-linux
+          path: build/bin/MarkViewPro
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp artifacts/MarkViewPro-windows/MarkViewPro.exe release/MarkViewPro-windows-amd64.exe
+          zip -j release/MarkViewPro-macos-amd64.zip artifacts/MarkViewPro-macos/MarkViewPro.app
+          cp artifacts/MarkViewPro-linux/MarkViewPro release/MarkViewPro-linux-amd64
+          chmod +x release/MarkViewPro-linux-amd64
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release/MarkViewPro-windows-amd64.exe
+            release/MarkViewPro-macos-amd64.zip
+            release/MarkViewPro-linux-amd64
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
