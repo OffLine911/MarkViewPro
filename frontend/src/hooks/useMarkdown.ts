@@ -188,9 +188,9 @@ export function useMarkdown() {
         characterCount: countCharacters(result.content),
         headings: extractHeadings(result.content),
       });
-      return true;
+      return result; // Return the file data instead of just true
     }
-    return false;
+    return null;
   }, []);
 
   const openFileByPath = useCallback(async (path: string) => {

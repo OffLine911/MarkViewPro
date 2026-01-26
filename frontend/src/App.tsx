@@ -33,7 +33,6 @@ export default function App() {
   const {
     content,
     filePath,
-    fileName,
     isModified,
     openFile,
     saveFile,
@@ -203,9 +202,9 @@ export default function App() {
   const handleOpen = useCallback(async () => {
     const result = await openFile();
     if (result) {
-      addTab(fileName || 'Untitled', filePath, content);
+      addTab(result.name, result.path, result.content);
     }
-  }, [openFile, addTab, fileName, filePath, content]);
+  }, [openFile, addTab]);
 
   const handleOpenFolder = useCallback(async () => {
     const tree = await wails.openFolder();
