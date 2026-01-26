@@ -144,6 +144,57 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
               />
             </label>
+
+            <label className="flex items-center justify-between p-2.5 bg-zinc-800/50 rounded cursor-pointer hover:bg-zinc-800 transition-colors">
+              <span className="text-xs text-zinc-300">Auto-save</span>
+              <input
+                type="checkbox"
+                checked={settings.autoSave}
+                onChange={(e) => updateSettings({ autoSave: e.target.checked })}
+                className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
+              />
+            </label>
+
+            {settings.autoSave && (
+              <div className="pl-2.5">
+                <label className="block text-xs font-medium text-zinc-400 mb-2">
+                  Auto-save delay: {settings.autoSaveDelay / 1000}s
+                </label>
+                <input
+                  type="range"
+                  min="1000"
+                  max="10000"
+                  step="1000"
+                  value={settings.autoSaveDelay}
+                  onChange={(e) => updateSettings({ autoSaveDelay: parseInt(e.target.value) })}
+                  className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                />
+                <div className="flex justify-between text-[10px] text-zinc-600 mt-1">
+                  <span>1s</span>
+                  <span>10s</span>
+                </div>
+              </div>
+            )}
+
+            <label className="flex items-center justify-between p-2.5 bg-zinc-800/50 rounded cursor-pointer hover:bg-zinc-800 transition-colors">
+              <span className="text-xs text-zinc-300">Sync scroll (split view)</span>
+              <input
+                type="checkbox"
+                checked={settings.syncScroll}
+                onChange={(e) => updateSettings({ syncScroll: e.target.checked })}
+                className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-2.5 bg-zinc-800/50 rounded cursor-pointer hover:bg-zinc-800 transition-colors">
+              <span className="text-xs text-zinc-300">Spell check</span>
+              <input
+                type="checkbox"
+                checked={settings.spellCheck}
+                onChange={(e) => updateSettings({ spellCheck: e.target.checked })}
+                className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
+              />
+            </label>
           </div>
         </div>
 

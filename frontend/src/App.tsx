@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useCallback, useEffect, useMemo, lazy, Suspense, useRef } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Titlebar } from './components/Titlebar/Titlebar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
@@ -12,6 +12,7 @@ import { useMarkdown } from './hooks/useMarkdown';
 import { useTabs } from './hooks/useTabs';
 import { useAppKeyboard } from './hooks/useKeyboard';
 import { useToast } from './hooks/useToast';
+import { useSettings } from './hooks/useSettings';
 import { wails, FileNode } from './utils/wailsBindings';
 import type { RecentFile } from './types';
 
@@ -34,6 +35,8 @@ export default function App() {
 
   const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab, updateTab, updateTabContent } = useTabs();
   const { toasts, dismissToast, success, error, info } = useToast();
+  const { settings } = useSettings();
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const {
     content,
@@ -126,6 +129,70 @@ export default function App() {
     const files = await wails.getRecentFiles();
     setRecentFiles(files);
   }, []);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!settings.autoSave || !activeTab || !activeTab.isModified || !activeTab.filePath) {
+      return;
+    }
+
+    // Clear existing timer
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    // Set new timer
+    autoSaveTimerRef.current = setTimeout(async () => {
+      try {
+        const saveSuccess = await wails.saveFile(activeTab.filePath!, activeTab.content);
+        if (saveSuccess) {
+          updateTab(activeTab.id, { isModified: false });
+          info('Auto-saved', 2000);
+        }
+      } catch (err) {
+        console.error('Auto-save error:', err);
+      }
+    }, settings.autoSaveDelay);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [activeTab?.content, activeTab?.isModified, activeTab?.filePath, settings.autoSave, settings.autoSaveDelay, updateTab, info]);
+
+  // File watching for auto-reload
+  useEffect(() => {
+    if (!settings.autoReload || !activeTab?.filePath) {
+      wails.stopWatching();
+      return;
+    }
+
+    const startWatching = async () => {
+      await wails.startWatching(activeTab.filePath!);
+    };
+    startWatching();
+
+    // Listen for file change events
+    const handleFileChanged = async () => {
+      try {
+        const result = await wails.readFileByPath(activeTab.filePath!);
+        if (result && result.content !== activeTab.content) {
+          updateTab(activeTab.id, { content: result.content, isModified: false });
+          info('File reloaded from disk', 3000);
+        }
+      } catch (err) {
+        console.error('File reload error:', err);
+      }
+    };
+
+    wails.onEvent('file:changed', handleFileChanged);
+
+    return () => {
+      wails.offEvent('file:changed');
+      wails.stopWatching();
+    };
+  }, [activeTab?.filePath, settings.autoReload, activeTab?.id, updateTab, info]);
 
   // Handle image paste
   useEffect(() => {
@@ -233,12 +300,18 @@ export default function App() {
   }, [zoom]);
 
   const handleOpen = useCallback(async () => {
-    const result = await openFile();
-    if (result) {
-      addTab(result.name, result.path, result.content);
-      updateRecentFiles();
+    try {
+      const result = await openFile();
+      if (result) {
+        addTab(result.name, result.path, result.content);
+        updateRecentFiles();
+        success(`Opened ${result.name}`);
+      }
+    } catch (err) {
+      error('Failed to open file');
+      console.error('Open error:', err);
     }
-  }, [openFile, addTab, updateRecentFiles]);
+  }, [openFile, addTab, updateRecentFiles, success, error]);
 
   const handleOpenRecentFile = useCallback(async (path: string) => {
     try {
@@ -257,20 +330,34 @@ export default function App() {
   }, [addTab, updateRecentFiles, info, error]);
 
   const handleOpenFolder = useCallback(async () => {
-    const tree = await wails.openFolder();
-    if (tree && tree.length > 0) {
-      setFolderTree(tree);
-      setSidebarOpen(true);
+    try {
+      const tree = await wails.openFolder();
+      if (tree && tree.length > 0) {
+        setFolderTree(tree);
+        setSidebarOpen(true);
+        success('Folder opened successfully');
+      }
+    } catch (err) {
+      error('Failed to open folder');
+      console.error('Open folder error:', err);
     }
-  }, []);
+  }, [success, error]);
 
   const handleFileTreeClick = useCallback(async (path: string) => {
-    const content = await wails.readFileFromFolder(path);
-    if (content) {
-      const fileName = path.split('/').pop() || path.split('\\').pop() || 'Untitled';
-      addTab(fileName, path, content);
+    try {
+      const content = await wails.readFileFromFolder(path);
+      if (content) {
+        const fileName = path.split('/').pop() || path.split('\\').pop() || 'Untitled';
+        addTab(fileName, path, content);
+        success(`Opened ${fileName}`);
+      } else {
+        error('Failed to read file');
+      }
+    } catch (err) {
+      error('Error opening file from folder');
+      console.error('File tree click error:', err);
     }
-  }, [addTab]);
+  }, [addTab, success, error]);
 
   const handleNew = useCallback(() => {
     if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {

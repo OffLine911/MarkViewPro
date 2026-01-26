@@ -8,18 +8,19 @@ import (
 )
 
 type UserSettings struct {
-	Theme           string `json:"theme"`
-	FontSize        int    `json:"fontSize"`
-	FontFamily      string `json:"fontFamily"`
+	Theme           string  `json:"theme"`
+	FontSize        int     `json:"fontSize"`
+	FontFamily      string  `json:"fontFamily"`
 	LineHeight      float64 `json:"lineHeight"`
-	EditorTheme     string `json:"editorTheme"`
-	PreviewTheme    string `json:"previewTheme"`
-	AutoSave        bool   `json:"autoSave"`
-	AutoSaveDelay   int    `json:"autoSaveDelay"`
-	SyncScroll      bool   `json:"syncScroll"`
-	ShowLineNumbers bool   `json:"showLineNumbers"`
-	WordWrap        bool   `json:"wordWrap"`
-	SpellCheck      bool   `json:"spellCheck"`
+	EditorTheme     string  `json:"editorTheme"`
+	PreviewTheme    string  `json:"previewTheme"`
+	AutoSave        bool    `json:"autoSave"`
+	AutoSaveDelay   int     `json:"autoSaveDelay"`
+	AutoReload      bool    `json:"autoReload"`
+	SyncScroll      bool    `json:"syncScroll"`
+	ShowLineNumbers bool    `json:"showLineNumbers"`
+	WordWrap        bool    `json:"wordWrap"`
+	SpellCheck      bool    `json:"spellCheck"`
 }
 
 type Settings struct {
@@ -43,6 +44,7 @@ func defaultSettings() UserSettings {
 		PreviewTheme:    "github",
 		AutoSave:        true,
 		AutoSaveDelay:   3000,
+		AutoReload:      true,
 		SyncScroll:      true,
 		ShowLineNumbers: true,
 		WordWrap:        true,

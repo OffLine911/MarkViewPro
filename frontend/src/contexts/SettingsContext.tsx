@@ -41,7 +41,7 @@ function backendToFrontend(backend: BackendSettings): Settings {
     autoSave: backend.autoSave ?? false,
     autoSaveDelay: backend.autoSaveDelay || 3000,
     wordWrap: backend.wordWrap ?? true,
-    autoReload: true, // Not in backend
+    autoReload: backend.autoReload ?? true,
     editorTheme: backend.editorTheme || 'default',
     previewTheme: backend.previewTheme || 'github',
     syncScroll: backend.syncScroll ?? true,
@@ -59,6 +59,7 @@ function frontendToBackend(frontend: Settings): BackendSettings {
     autoSave: frontend.autoSave,
     autoSaveDelay: frontend.autoSaveDelay,
     wordWrap: frontend.wordWrap,
+    autoReload: frontend.autoReload,
     editorTheme: frontend.editorTheme,
     previewTheme: frontend.previewTheme,
     syncScroll: frontend.syncScroll,

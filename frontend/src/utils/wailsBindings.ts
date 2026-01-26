@@ -50,6 +50,7 @@ export interface BackendSettings {
   previewTheme: string;
   autoSave: boolean;
   autoSaveDelay: number;
+  autoReload: boolean;
   syncScroll: boolean;
   showLineNumbers: boolean;
   wordWrap: boolean;
