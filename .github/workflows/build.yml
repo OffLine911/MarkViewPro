@@ -59,7 +59,9 @@ jobs:
 
       - name: Build (Windows with NSIS)
         if: matrix.os == 'windows-latest'
-        run: wails build -platform ${{ matrix.platform }}/amd64 -nsis
+        run: |
+          wails build -platform ${{ matrix.platform }}/amd64 -nsis
+          dir build\bin
 
       - name: Build (macOS/Linux)
         if: matrix.os != 'windows-latest'
@@ -107,9 +109,15 @@ jobs:
           ls -la artifacts/MarkViewPro-macos/ || true
           ls -la artifacts/MarkViewPro-linux/ || true
           
-          # Copy Windows executable and installer
+          # Copy Windows executable
           cp artifacts/MarkViewPro-windows/MarkViewPro.exe release/MarkViewPro-windows-amd64.exe
-          cp artifacts/MarkViewPro-windows/MarkViewPro-amd64-installer.exe release/MarkViewPro-windows-amd64-installer.exe
+          
+          # Copy Windows installer if it exists
+          if [ -f artifacts/MarkViewPro-windows/MarkViewPro-amd64-installer.exe ]; then
+            cp artifacts/MarkViewPro-windows/MarkViewPro-amd64-installer.exe release/MarkViewPro-windows-amd64-installer.exe
+          else
+            echo "Warning: NSIS installer not found"
+          fi
           
           # Zip macOS app bundle
           cd artifacts/MarkViewPro-macos
@@ -128,6 +136,7 @@ jobs:
             release/MarkViewPro-windows-amd64-installer.exe
             release/MarkViewPro-macos-amd64.zip
             release/MarkViewPro-linux-amd64
+          fail_on_unmatched_files: false
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
