@@ -16,5 +16,17 @@
     "productVersion": "1.0.0",
     "copyright": "Copyright © 2024 MarkViewPro Contributors",
     "comments": "A modern Markdown viewer and editor"
+  },
+  "nsis": {
+    "enabled": true,
+    "languages": ["English"],
+    "installerIcon": "build/appicon.png",
+    "uninstallerIcon": "build/appicon.png",
+    "license": "LICENSE",
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "runAfterFinish": true
   }
 }

@@ -38,6 +38,11 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install NSIS (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install nsis -y
+          
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
@@ -53,14 +58,16 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
       - name: Build
-        run: wails build -platform ${{ matrix.platform }}/amd64
+        run: wails build -platform ${{ matrix.platform }}/amd64 -nsis
 
       - name: Upload artifact (Windows)
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: MarkViewPro-windows
-          path: build/bin/MarkViewPro.exe
+          path: |
+            build/bin/MarkViewPro.exe
+            build/bin/MarkViewPro-amd64-installer.exe
 
       - name: Upload artifact (macOS)
         if: matrix.os == 'macos-latest'
@@ -95,8 +102,9 @@ jobs:
           ls -la artifacts/MarkViewPro-macos/ || true
           ls -la artifacts/MarkViewPro-linux/ || true
           
-          # Copy Windows executable
+          # Copy Windows executable and installer
           cp artifacts/MarkViewPro-windows/MarkViewPro.exe release/MarkViewPro-windows-amd64.exe
+          cp artifacts/MarkViewPro-windows/MarkViewPro-amd64-installer.exe release/MarkViewPro-windows-amd64-installer.exe
           
           # Zip macOS app bundle
           cd artifacts/MarkViewPro-macos
@@ -112,6 +120,7 @@ jobs:
         with:
           files: |
             release/MarkViewPro-windows-amd64.exe
+            release/MarkViewPro-windows-amd64-installer.exe
             release/MarkViewPro-macos-amd64.zip
             release/MarkViewPro-linux-amd64
           generate_release_notes: true

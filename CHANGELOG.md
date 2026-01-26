@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings modal for customization
 - Status bar with file information
 - Modern UI with Tailwind CSS
+- Windows NSIS installer for easy installation
 
 ### Fixed
 - Updated GitHub Actions workflow to use `actions/upload-artifact@v4` (from deprecated v3)
