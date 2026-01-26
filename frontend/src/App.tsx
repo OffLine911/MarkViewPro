@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
-import { Toolbar } from './components/Toolbar/Toolbar';
+import { Titlebar } from './components/Titlebar/Titlebar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
 import { StatusBar } from './components/StatusBar/StatusBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
@@ -67,8 +67,8 @@ export default function App() {
   });
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
-      <Toolbar
+    <div className="flex flex-col h-screen">
+      <Titlebar
         fileName={fileName}
         isModified={isModified}
         onNew={newFile}
@@ -81,7 +81,7 @@ export default function App() {
         sidebarOpen={sidebarOpen}
       />
 
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={handleToggleSidebar}
@@ -89,7 +89,7 @@ export default function App() {
           recentFiles={recentFiles}
         />
 
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
+        <main className="flex-1 overflow-y-auto main-content">
           <MarkdownViewer content={content} headings={headings} />
         </main>
       </div>

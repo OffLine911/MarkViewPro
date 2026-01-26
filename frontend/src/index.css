@@ -12,21 +12,30 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
     overflow: hidden;
+  }
+
+  .dark body,
+  .dark {
+    @apply bg-zinc-950 text-zinc-100;
+  }
+
+  :root:not(.dark) body,
+  :root:not(.dark) {
+    @apply bg-gray-50 text-gray-900;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.gray.400') transparent;
+    scrollbar-color: #3f3f46 transparent;
   }
 
-  .dark * {
-    scrollbar-color: theme('colors.gray.600') transparent;
+  :root:not(.dark) * {
+    scrollbar-color: #d1d5db transparent;
   }
 
   *::-webkit-scrollbar {
-    @apply w-2 h-2;
+    @apply w-1.5 h-1.5;
   }
 
   *::-webkit-scrollbar-track {
@@ -34,88 +43,212 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    @apply bg-zinc-700 rounded-full;
+  }
+
+  :root:not(.dark) *::-webkit-scrollbar-thumb {
+    @apply bg-gray-300;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-500;
+    @apply bg-zinc-600;
+  }
+
+  :root:not(.dark) *::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 }
 
 @layer components {
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  .titlebar-bg {
+    @apply bg-zinc-950 border-b border-zinc-800;
   }
 
-  .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 dark:focus:ring-offset-gray-900;
+  :root:not(.dark) .titlebar-bg {
+    @apply bg-gray-100 border-b border-gray-300;
   }
 
-  .btn-secondary {
-    @apply btn bg-gray-100 text-gray-700 hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900;
+  .titlebar-text {
+    @apply text-zinc-300;
   }
 
-  .btn-ghost {
-    @apply btn bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800;
+  :root:not(.dark) .titlebar-text {
+    @apply text-gray-700;
   }
 
-  .btn-icon {
-    @apply p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors;
+  .titlebar-btn {
+    @apply p-1.5 rounded text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700/50 transition-colors;
+  }
+
+  :root:not(.dark) .titlebar-btn {
+    @apply text-gray-500 hover:text-gray-900 hover:bg-gray-200/50;
+  }
+
+  .window-btn {
+    @apply p-2 text-zinc-400 hover:text-zinc-100 transition-colors;
+  }
+
+  :root:not(.dark) .window-btn {
+    @apply text-gray-500 hover:text-gray-900;
+  }
+
+  .dropdown-item {
+    @apply w-full flex items-center gap-2 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700 transition-colors;
+  }
+
+  :root:not(.dark) .dropdown-item {
+    @apply text-gray-700 hover:bg-gray-100;
   }
 
   .sidebar {
-    @apply flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700;
+    @apply flex flex-col h-full bg-zinc-900 border-r border-zinc-800;
   }
 
-  .toolbar {
-    @apply flex items-center gap-1 px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700;
+  :root:not(.dark) .sidebar {
+    @apply bg-gray-50 border-gray-200;
+  }
+
+  .sidebar-border {
+    @apply border-zinc-800;
+  }
+
+  :root:not(.dark) .sidebar-border {
+    @apply border-gray-200;
+  }
+
+  .sidebar-tab {
+    @apply flex-1 px-3 py-1.5 text-xs font-medium transition-colors;
+  }
+
+  .sidebar-tab-active {
+    @apply text-zinc-100 border-b-2 border-cyan-500;
+  }
+
+  :root:not(.dark) .sidebar-tab-active {
+    @apply text-gray-900 border-cyan-600;
+  }
+
+  .sidebar-tab-inactive {
+    @apply text-zinc-500 hover:text-zinc-300 border-b-2 border-transparent;
+  }
+
+  :root:not(.dark) .sidebar-tab-inactive {
+    @apply text-gray-500 hover:text-gray-700;
+  }
+
+  .main-content {
+    @apply bg-zinc-900;
+  }
+
+  :root:not(.dark) .main-content {
+    @apply bg-white;
   }
 
   .statusbar {
-    @apply flex items-center justify-between px-4 py-1.5 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700;
+    @apply flex items-center justify-between px-3 py-1 text-[10px] text-zinc-500 bg-zinc-900 border-t border-zinc-800;
+  }
+
+  :root:not(.dark) .statusbar {
+    @apply text-gray-500 bg-gray-100 border-gray-200;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-cyan-600 text-white hover:bg-cyan-500 focus:ring-cyan-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-zinc-800 text-zinc-300 hover:bg-zinc-700 focus:ring-zinc-600;
+  }
+
+  :root:not(.dark) .btn-secondary {
+    @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100;
+  }
+
+  :root:not(.dark) .btn-ghost {
+    @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900;
   }
 
   .markdown-body {
-    @apply max-w-none text-gray-900 dark:text-gray-100;
-    font-size: var(--md-font-size, 16px);
-    line-height: var(--md-line-height, 1.6);
+    @apply max-w-none text-zinc-200;
+    font-size: var(--md-font-size, 15px);
+    line-height: var(--md-line-height, 1.7);
+  }
+
+  :root:not(.dark) .markdown-body {
+    @apply text-gray-800;
   }
 
   .markdown-body h1 {
-    @apply text-3xl font-bold mt-8 mb-4 pb-2 border-b border-gray-200 dark:border-gray-700;
+    @apply text-2xl font-bold mt-8 mb-3 pb-2 border-b border-zinc-800 text-zinc-50;
+  }
+
+  :root:not(.dark) .markdown-body h1 {
+    @apply border-gray-200 text-gray-900;
   }
 
   .markdown-body h2 {
-    @apply text-2xl font-semibold mt-6 mb-3 pb-2 border-b border-gray-200 dark:border-gray-700;
+    @apply text-xl font-semibold mt-6 mb-2 pb-1.5 border-b border-zinc-800 text-zinc-50;
+  }
+
+  :root:not(.dark) .markdown-body h2 {
+    @apply border-gray-200 text-gray-900;
   }
 
   .markdown-body h3 {
-    @apply text-xl font-semibold mt-5 mb-2;
+    @apply text-lg font-semibold mt-5 mb-2 text-zinc-100;
+  }
+
+  :root:not(.dark) .markdown-body h3 {
+    @apply text-gray-900;
   }
 
   .markdown-body h4 {
-    @apply text-lg font-semibold mt-4 mb-2;
+    @apply text-base font-semibold mt-4 mb-1.5 text-zinc-100;
+  }
+
+  :root:not(.dark) .markdown-body h4 {
+    @apply text-gray-900;
   }
 
   .markdown-body h5 {
-    @apply text-base font-semibold mt-4 mb-2;
+    @apply text-sm font-semibold mt-4 mb-1.5 text-zinc-200;
+  }
+
+  :root:not(.dark) .markdown-body h5 {
+    @apply text-gray-800;
   }
 
   .markdown-body h6 {
-    @apply text-sm font-semibold mt-4 mb-2 text-gray-600 dark:text-gray-400;
+    @apply text-xs font-semibold mt-4 mb-1.5 text-zinc-400 uppercase tracking-wide;
+  }
+
+  :root:not(.dark) .markdown-body h6 {
+    @apply text-gray-500;
   }
 
   .markdown-body p {
-    @apply my-4 leading-relaxed;
+    @apply my-3 leading-relaxed;
   }
 
   .markdown-body a {
-    @apply text-primary-600 dark:text-primary-400 hover:underline;
+    @apply text-cyan-400 hover:text-cyan-300 hover:underline;
+  }
+
+  :root:not(.dark) .markdown-body a {
+    @apply text-cyan-600 hover:text-cyan-700;
   }
 
   .markdown-body ul,
   .markdown-body ol {
-    @apply my-4 pl-6;
+    @apply my-3 pl-5;
   }
 
   .markdown-body ul {
@@ -130,101 +263,120 @@
     @apply my-1;
   }
 
+  .markdown-body li::marker {
+    @apply text-zinc-500;
+  }
+
+  :root:not(.dark) .markdown-body li::marker {
+    @apply text-gray-400;
+  }
+
   .markdown-body blockquote {
-    @apply my-4 pl-4 border-l-4 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 italic;
+    @apply my-4 pl-4 border-l-2 border-cyan-600/50 text-zinc-400 italic bg-zinc-800/30 py-2 pr-4 rounded-r;
+  }
+
+  :root:not(.dark) .markdown-body blockquote {
+    @apply text-gray-600 bg-gray-100 border-cyan-500/50;
   }
 
   .markdown-body code:not(pre code) {
-    @apply px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono text-primary-600 dark:text-primary-400;
+    @apply px-1.5 py-0.5 bg-zinc-800 rounded text-sm font-mono text-cyan-400;
+  }
+
+  :root:not(.dark) .markdown-body code:not(pre code) {
+    @apply bg-gray-100 text-cyan-700;
   }
 
   .markdown-body pre {
-    @apply my-4 rounded-lg overflow-hidden;
+    @apply my-4 rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800;
+  }
+
+  :root:not(.dark) .markdown-body pre {
+    @apply bg-gray-900 border-gray-300;
   }
 
   .markdown-body table {
-    @apply my-4 w-full border-collapse;
+    @apply my-4 w-full border-collapse text-sm;
   }
 
   .markdown-body th,
   .markdown-body td {
-    @apply px-4 py-2 border border-gray-300 dark:border-gray-600;
+    @apply px-3 py-2 border border-zinc-800;
+  }
+
+  :root:not(.dark) .markdown-body th,
+  :root:not(.dark) .markdown-body td {
+    @apply border-gray-300;
   }
 
   .markdown-body th {
-    @apply bg-gray-100 dark:bg-gray-800 font-semibold text-left;
+    @apply bg-zinc-800 font-semibold text-left text-zinc-200;
+  }
+
+  :root:not(.dark) .markdown-body th {
+    @apply bg-gray-100 text-gray-900;
   }
 
   .markdown-body tr:nth-child(even) {
-    @apply bg-gray-50 dark:bg-gray-800/50;
+    @apply bg-zinc-900/50;
+  }
+
+  :root:not(.dark) .markdown-body tr:nth-child(even) {
+    @apply bg-gray-50;
   }
 
   .markdown-body hr {
-    @apply my-8 border-gray-200 dark:border-gray-700;
+    @apply my-6 border-zinc-800;
+  }
+
+  :root:not(.dark) .markdown-body hr {
+    @apply border-gray-200;
   }
 
   .markdown-body img {
-    @apply max-w-full h-auto rounded-lg my-4;
+    @apply max-w-full h-auto rounded my-4;
   }
 
   .markdown-body strong {
-    @apply font-semibold;
+    @apply font-semibold text-zinc-100;
+  }
+
+  :root:not(.dark) .markdown-body strong {
+    @apply text-gray-900;
   }
 
   .markdown-body em {
-    @apply italic;
+    @apply italic text-zinc-300;
+  }
+
+  :root:not(.dark) .markdown-body em {
+    @apply text-gray-700;
+  }
+
+  .markdown-body .task-list-item {
+    @apply list-none;
+  }
+
+  .markdown-body input[type="checkbox"] {
+    @apply mr-2 accent-cyan-500;
   }
 }
 
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  .animate-slide-in {
-    animation: slideIn 0.2s ease-out;
-  }
-
-  .animate-slide-out {
-    animation: slideOut 0.2s ease-out;
+    animation: fadeIn 0.15s ease-out;
   }
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes slideIn {
-    from {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  .wails-drag {
+    --wails-draggable: drag;
   }
 
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(-100%);
-      opacity: 0;
-    }
-  }
-
-  .no-drag {
-    -webkit-app-region: no-drag;
-  }
-
-  .drag {
-    -webkit-app-region: drag;
+  .wails-no-drag {
+    --wails-draggable: no-drag;
   }
 }

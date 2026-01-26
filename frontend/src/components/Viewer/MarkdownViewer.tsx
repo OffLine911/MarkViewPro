@@ -16,10 +16,11 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
 
   return (
     <div
-      className="markdown-body p-8 max-w-4xl mx-auto"
+      className="markdown-body px-8 py-6 max-w-3xl mx-auto"
       style={{
         ['--md-font-size' as string]: `${settings.fontSize}px`,
         ['--md-line-height' as string]: settings.lineHeight,
+        fontFamily: settings.fontFamily,
       }}
     >
       <ReactMarkdown
@@ -77,7 +78,7 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
           },
           table({ children }) {
             return (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded border border-zinc-800">
                 <table>{children}</table>
               </div>
             );

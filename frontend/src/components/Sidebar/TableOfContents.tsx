@@ -1,4 +1,3 @@
-
 import { List } from 'lucide-react';
 import type { HeadingItem } from '../../types';
 
@@ -16,32 +15,26 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
 
   if (headings.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
-        <List className="w-8 h-8 mb-2" />
-        <p className="text-sm">No headings found</p>
+      <div className="flex flex-col items-center justify-center py-8 text-zinc-600">
+        <List className="w-6 h-6 mb-1.5" />
+        <p className="text-xs">No headings found</p>
       </div>
     );
   }
 
   return (
-    <nav className="py-2">
-      <ul className="space-y-0.5">
+    <nav className="py-1">
+      <ul>
         {headings.map((heading) => (
           <li key={heading.id}>
             <button
               onClick={() => handleClick(heading.id)}
-              className={`
-                w-full text-left px-3 py-1.5 text-sm rounded-lg
-                text-gray-600 dark:text-gray-300
-                hover:bg-gray-100 dark:hover:bg-gray-700
-                hover:text-gray-900 dark:hover:text-white
-                transition-colors truncate
-              `}
-              style={{ paddingLeft: `${(heading.level - 1) * 12 + 12}px` }}
+              className="w-full text-left px-3 py-1 text-xs rounded hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 transition-colors truncate"
+              style={{ paddingLeft: `${(heading.level - 1) * 8 + 12}px` }}
               title={heading.text}
             >
-              <span className="flex items-center gap-2">
-                <span className="text-gray-400 dark:text-gray-500 text-xs font-mono">
+              <span className="flex items-center gap-1.5">
+                <span className="text-zinc-600 text-[10px] font-mono w-4">
                   {'#'.repeat(heading.level)}
                 </span>
                 <span className="truncate">{heading.text}</span>
