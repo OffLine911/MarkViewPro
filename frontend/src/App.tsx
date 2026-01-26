@@ -37,7 +37,6 @@ export default function App() {
     filePath,
     isModified,
     openFile,
-    saveFile,
     newFile,
     updateContent,
   } = useMarkdown();
