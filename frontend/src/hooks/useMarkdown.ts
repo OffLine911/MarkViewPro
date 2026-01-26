@@ -2,48 +2,124 @@ import { useState, useCallback, useMemo } from 'react';
 import type { MarkdownState, HeadingItem } from '../types';
 import { wails } from '../utils/wailsBindings';
 
-const defaultMarkdown = `# Welcome to MarkView Pro
+const defaultMarkdown = `# 👋 Welcome to MarkView Pro
 
-A modern, feature-rich Markdown viewer built with Wails and React.
+A modern, powerful Markdown viewer and editor built with Wails and React.
 
-## Features
+## ✨ Key Features
 
-- **Live Preview** - See your markdown rendered in real-time
-- **Syntax Highlighting** - Beautiful code blocks with syntax highlighting
-- **Dark Mode** - Easy on the eyes with full dark mode support
-- **Table of Contents** - Navigate your documents easily
-- **Export Options** - Export to PDF or HTML
+### 📝 Editing & Viewing
+- **Live Preview** - See your markdown rendered beautifully in real-time
+- **Syntax Highlighting** - Code blocks with multi-language support
+- **Mermaid Diagrams** - Create flowcharts, sequence diagrams, and more
+- **Math Equations** - Full KaTeX support for mathematical expressions
 
-## Code Example
+### 🎨 Customization
+- **Dark & Light Themes** - Easy on the eyes with automatic theme switching
+- **Zoom Controls** - Adjust text size with Ctrl+/Ctrl-/Ctrl+0
+- **Custom Fonts** - Choose your preferred reading font
+- **Adjustable Line Height** - Optimize for your reading comfort
+
+### 🔍 Navigation & Search
+- **Table of Contents** - Quick navigation through document structure
+- **In-Document Search** - Find text with Ctrl+F
+- **Heading Anchors** - Direct links to any section
+
+### 📤 Export & Sharing
+- **PDF Export** - Professional document output
+- **HTML Export** - Standalone web pages
+- **Print Support** - Optimized print layouts (Ctrl+P)
+
+## 🚀 Quick Start
+
+### Opening Files
+- **Ctrl+O** - Open a markdown file
+- **Drag & Drop** - Drop .md files directly onto the window
+- **Ctrl+N** - Start a new document
+
+### Keyboard Shortcuts
+| Shortcut | Action |
+|----------|--------|
+| Ctrl+O | Open file |
+| Ctrl+S | Save file |
+| Ctrl+N | New file |
+| Ctrl+F | Search in document |
+| Ctrl+E | Export to PDF |
+| Ctrl+P | Print |
+| Ctrl+B | Toggle sidebar |
+| F11 | Fullscreen mode |
+| Ctrl++ | Zoom in |
+| Ctrl+- | Zoom out |
+| Ctrl+0 | Reset zoom |
+
+## 💻 Code Example
 
 \`\`\`typescript
-function greet(name: string): string {
-  return \`Hello, \${name}!\`;
+// TypeScript with syntax highlighting
+interface User {
+  name: string;
+  email: string;
+  role: 'admin' | 'user';
 }
 
-console.log(greet('World'));
+function greetUser(user: User): string {
+  return \`Hello, \${user.name}! Welcome back.\`;
+}
+
+const currentUser: User = {
+  name: 'Developer',
+  email: 'dev@example.com',
+  role: 'admin'
+};
+
+console.log(greetUser(currentUser));
 \`\`\`
 
-## Table Example
+## 📊 Mermaid Diagram Example
 
-| Feature | Status |
-|---------|--------|
-| Markdown Rendering | ✅ |
-| Syntax Highlighting | ✅ |
-| Dark Mode | ✅ |
-| Export to PDF | ✅ |
+\`\`\`mermaid
+graph TD
+    A[Start] --> B{Is it working?}
+    B -->|Yes| C[Great!]
+    B -->|No| D[Debug]
+    D --> B
+    C --> E[End]
+\`\`\`
 
-## Getting Started
+## 📐 Math Support
 
-1. Open a markdown file using **Ctrl+O**
-2. Navigate using the table of contents
-3. Export using **Ctrl+E**
+Inline math: $E = mc^2$
+
+Block math:
+
+$$
+\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+$$
+
+## 📋 Table Example
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Markdown Rendering | ✅ | Full GFM support |
+| Syntax Highlighting | ✅ | 100+ languages |
+| Dark Mode | ✅ | Auto-switching |
+| Export to PDF | ✅ | High quality |
+| Mermaid Diagrams | ✅ | Interactive |
+| Math Equations | ✅ | KaTeX powered |
+
+## 🎯 Tips & Tricks
+
+> **Pro Tip**: Use the sidebar to quickly navigate through your document structure. Toggle it with Ctrl+B.
+
+> **Reading Mode**: Press F11 for fullscreen, distraction-free reading.
+
+> **Search**: Use Ctrl+F to search within your document. Navigate results with Enter/Shift+Enter.
 
 ---
 
-> "Simplicity is the ultimate sophistication." - Leonardo da Vinci
+**Ready to start?** Press **Ctrl+O** to open your first markdown file, or **Ctrl+N** to create a new one!
 
-Enjoy using **MarkView Pro**!
+*Made with ❤️ using Wails and React*
 `;
 
 function extractHeadings(content: string): HeadingItem[] {
@@ -82,7 +158,7 @@ export function useMarkdown() {
   const [state, setState] = useState<MarkdownState>(() => ({
     content: defaultMarkdown,
     filePath: null,
-    fileName: null,
+    fileName: 'Welcome to MarkView Pro',
     isModified: false,
     wordCount: countWords(defaultMarkdown),
     characterCount: countCharacters(defaultMarkdown),
@@ -162,7 +238,7 @@ export function useMarkdown() {
     setState({
       content: '',
       filePath: null,
-      fileName: null,
+      fileName: 'New Document',
       isModified: false,
       wordCount: 0,
       characterCount: 0,

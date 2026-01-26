@@ -183,7 +183,22 @@ func (a *App) UpdateSettings(s settings.UserSettings) error {
 	return a.settings.Update(s)
 }
 
-func (a *App) ExportToHTML(content, outputPath string) error {
+func (a *App) ExportToHTML(content string) error {
+	// Show save dialog for HTML
+	outputPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:           "Export to HTML",
+		DefaultFilename: "export.html",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "HTML Files", Pattern: "*.html"},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if outputPath == "" {
+		return nil
+	}
+
 	html, err := a.renderer.Render(content)
 	if err != nil {
 		return err

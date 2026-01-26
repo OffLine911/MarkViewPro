@@ -8,7 +8,7 @@ declare global {
           SaveFileAs: (content: string) => Promise<string>;
           ExportToPDF: (path: string) => Promise<void>;
           ExportContentToPDF: (content: string) => Promise<void>;
-          ExportToHTML: (content: string, path: string) => Promise<void>;
+          ExportToHTML: (content: string) => Promise<void>;
           GetRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: string }>>;
           OpenFileDialog: () => Promise<string>;
           SaveFileDialog: (defaultName: string) => Promise<string>;
@@ -98,10 +98,10 @@ export const wails = {
     }
   },
 
-  async exportToHTML(content: string, path: string): Promise<boolean> {
+  async exportToHTML(content: string): Promise<boolean> {
     try {
       if (window.go?.main?.App?.ExportToHTML) {
-        await window.go.main.App.ExportToHTML(content, path);
+        await window.go.main.App.ExportToHTML(content);
         return true;
       }
       return false;

@@ -10,8 +10,8 @@ export function ExportContentToPDF(arg1) {
   return window['go']['main']['App']['ExportContentToPDF'](arg1);
 }
 
-export function ExportToHTML(arg1, arg2) {
-  return window['go']['main']['App']['ExportToHTML'](arg1, arg2);
+export function ExportToHTML(arg1) {
+  return window['go']['main']['App']['ExportToHTML'](arg1);
 }
 
 export function ExportToPDF(arg1) {

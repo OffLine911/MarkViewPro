@@ -28,6 +28,27 @@ export default function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Prevent default drag and drop behavior that opens files in browser
+  useEffect(() => {
+    const preventDefaults = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // Prevent browser from opening dropped files
+    document.addEventListener('dragover', preventDefaults);
+    document.addEventListener('drop', preventDefaults);
+    document.addEventListener('dragenter', preventDefaults);
+    document.addEventListener('dragleave', preventDefaults);
+
+    return () => {
+      document.removeEventListener('dragover', preventDefaults);
+      document.removeEventListener('drop', preventDefaults);
+      document.removeEventListener('dragenter', preventDefaults);
+      document.removeEventListener('dragleave', preventDefaults);
+    };
+  }, []);
+
   // Apply zoom level
   useEffect(() => {
     document.documentElement.style.setProperty('--zoom-level', `${zoom}%`);
@@ -82,11 +103,8 @@ export default function App() {
   }, [filePath, content]);
 
   const handleExportHTML = useCallback(async () => {
-    const path = await wails.saveFileDialog(fileName || 'document.html');
-    if (path) {
-      await wails.exportToHTML(content, path);
-    }
-  }, [content, fileName]);
+    await wails.exportToHTML(content);
+  }, [content]);
 
   const handleToggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev);

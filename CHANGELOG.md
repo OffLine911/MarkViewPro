@@ -5,6 +5,32 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.7] - 2026-01-26
+
+### Fixed
+- **Drag & Drop**: Fixed files opening in separate browser window - now properly prevents default browser behavior
+- **HTML Export**: Fixed HTML export not working - now shows save dialog and exports correctly
+- **Welcome Message**: Replaced "Untitled" with proper welcome message and better default file names
+
+### Improved
+- **Welcome Screen**: Complete redesign with comprehensive feature showcase
+  - Added emoji icons for better visual appeal
+  - Included all keyboard shortcuts in a table
+  - Added Mermaid diagram example
+  - Added math equation examples
+  - Better organized feature sections
+  - Tips and tricks section
+- **Default File Names**: 
+  - Welcome screen now shows "Welcome to MarkView Pro"
+  - New documents show "New Document" instead of null/Untitled
+- **Drag & Drop**: Added event listeners to prevent browser from opening dropped files
+
+### Technical
+- Added dragover, drop, dragenter, dragleave event prevention
+- Updated ExportToHTML to handle save dialog internally
+- Simplified HTML export API (no longer requires path parameter)
+- Enhanced welcome markdown content with 100+ lines of examples
+
 ## [1.1.6] - 2026-01-26
 
 ### Fixed
@@ -88,6 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.1.7]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.7
 [1.1.6]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.6
 [1.1.5]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.5
 [1.1.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.0
