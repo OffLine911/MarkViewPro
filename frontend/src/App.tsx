@@ -9,6 +9,7 @@ import { SettingsModal } from './components/Settings/SettingsModal';
 import { SearchBar } from './components/Search/SearchBar';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { ViewModeToggle, ViewMode } from './components/Toolbar/ViewModeToggle';
+import { WelcomeScreen } from './components/Welcome/WelcomeScreen';
 import { useMarkdown } from './hooks/useMarkdown';
 import { useTabs } from './hooks/useTabs';
 import { useAppKeyboard } from './hooks/useKeyboard';
@@ -151,11 +152,6 @@ export default function App() {
 
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) {
-        // If this is the welcome tab and it's not modified, close it before adding new files
-        if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {
-          closeTab(tabs[0].id);
-        }
-
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           
@@ -207,12 +203,9 @@ export default function App() {
   const handleOpen = useCallback(async () => {
     const result = await openFile();
     if (result) {
-      if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {
-        closeTab(tabs[0].id);
-      }
       addTab(fileName || 'Untitled', filePath, content);
     }
-  }, [openFile, addTab, closeTab, tabs, fileName, filePath, content]);
+  }, [openFile, addTab, fileName, filePath, content]);
 
   const handleOpenFolder = useCallback(async () => {
     const tree = await wails.openFolder();
@@ -236,9 +229,9 @@ export default function App() {
     }
     newFile();
     addTab('New Document', null, '');
-  }, [newFile, addTab, closeTab, tabs]);
+  }, [newFile, addTab]);
 
-  const hasOpenFiles = tabs.length > 1 || (tabs.length === 1 && tabs[0].fileName !== 'Welcome to MarkView Pro');
+  const hasOpenFiles = tabs.length > 0;
 
   const handleSave = useCallback(async () => {
     if (filePath) {
@@ -524,42 +517,53 @@ export default function App() {
         />
 
         <main className="flex-1 overflow-hidden relative">
-          {/* View Mode Toggle */}
-          <div className="absolute top-2 right-2 z-10">
-            <ViewModeToggle mode={viewMode} onChange={setViewMode} />
-          </div>
-
-          {/* Search Bar */}
-          <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeContent} />
-
-          {/* Content Area */}
-          {viewMode === 'preview' && (
-            <div className="h-full overflow-y-auto">
-              <MarkdownViewer 
-                key={searchOpen ? 'search-open' : 'search-closed'} 
-                content={activeContent} 
-                headings={activeHeadings} 
-              />
-            </div>
-          )}
-
-          {viewMode === 'editor' && (
-            <div className="h-full">
-              <MarkdownEditor 
-                content={activeContent} 
-                onChange={handleContentChange}
-                theme="dark"
-              />
-            </div>
-          )}
-
-          {viewMode === 'split' && (
-            <SplitView
-              content={activeContent}
-              onChange={handleContentChange}
-              headings={activeHeadings}
-              theme="dark"
+          {/* Show Welcome Screen when no files are open */}
+          {tabs.length === 0 ? (
+            <WelcomeScreen 
+              onOpenFile={handleOpen}
+              onOpenFolder={handleOpenFolder}
+              onNewFile={handleNew}
             />
+          ) : (
+            <>
+              {/* View Mode Toggle - only show when files are open */}
+              <div className="absolute top-2 right-2 z-10">
+                <ViewModeToggle mode={viewMode} onChange={setViewMode} />
+              </div>
+
+              {/* Search Bar */}
+              <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeContent} />
+
+              {/* Content Area */}
+              {viewMode === 'preview' && (
+                <div className="h-full overflow-y-auto">
+                  <MarkdownViewer 
+                    key={searchOpen ? 'search-open' : 'search-closed'} 
+                    content={activeContent} 
+                    headings={activeHeadings} 
+                  />
+                </div>
+              )}
+
+              {viewMode === 'editor' && (
+                <div className="h-full">
+                  <MarkdownEditor 
+                    content={activeContent} 
+                    onChange={handleContentChange}
+                    theme="dark"
+                  />
+                </div>
+              )}
+
+              {viewMode === 'split' && (
+                <SplitView
+                  content={activeContent}
+                  onChange={handleContentChange}
+                  headings={activeHeadings}
+                  theme="dark"
+                />
+              )}
+            </>
           )}
         </main>
       </div>

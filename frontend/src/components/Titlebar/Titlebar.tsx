@@ -24,7 +24,7 @@ import { useSettings } from '../../hooks/useSettings';
 interface TitlebarProps {
   hasOpenFiles: boolean;
   tabs: Array<{ id: string; fileName: string; isModified: boolean }>;
-  activeTabId: string;
+  activeTabId: string | null;
   onTabClick: (tabId: string) => void;
   onTabClose: (tabId: string) => void;
   onNew: () => void;

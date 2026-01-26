@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { defaultMarkdown } from './useMarkdown';
 
 export interface Tab {
   id: string;
@@ -10,16 +9,9 @@ export interface Tab {
 }
 
 export function useTabs() {
-  const [tabs, setTabs] = useState<Tab[]>([
-    {
-      id: '1',
-      fileName: 'Welcome to MarkView Pro',
-      filePath: null,
-      content: defaultMarkdown,
-      isModified: false,
-    },
-  ]);
-  const [activeTabId, setActiveTabId] = useState('1');
+  // Start with no tabs - show welcome screen instead
+  const [tabs, setTabs] = useState<Tab[]>([]);
+  const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
   const activeTab = tabs.find(tab => tab.id === activeTabId);
 
@@ -52,16 +44,12 @@ export function useTabs() {
         const closedIndex = prev.findIndex(tab => tab.id === tabId);
         const newActiveIndex = Math.min(closedIndex, newTabs.length - 1);
         setActiveTabId(newTabs[newActiveIndex].id);
+      } else if (newTabs.length === 0) {
+        // No tabs left, set activeTabId to null to show welcome screen
+        setActiveTabId(null);
       }
       
-      // Keep at least one tab
-      return newTabs.length === 0 ? [{
-        id: Date.now().toString(),
-        fileName: 'Welcome to MarkView Pro',
-        filePath: null,
-        content: defaultMarkdown,
-        isModified: false,
-      }] : newTabs;
+      return newTabs;
     });
   }, [activeTabId]);
 
