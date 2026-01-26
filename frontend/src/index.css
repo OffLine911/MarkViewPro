@@ -10,10 +10,16 @@
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    @apply bg-zinc-950;
   }
 
   body {
     overflow: hidden;
+    @apply bg-zinc-950;
+  }
+
+  #root {
+    @apply bg-zinc-950;
   }
 
   .dark body,
@@ -138,7 +144,7 @@
   }
 
   .main-content {
-    @apply bg-zinc-900;
+    @apply bg-zinc-950;
   }
 
   :root:not(.dark) .main-content {

@@ -577,6 +577,9 @@ export default function App() {
         zoom={zoom}
         isModified={activeTab?.isModified || isModified}
         viewMode={viewMode}
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+        onZoomReset={handleZoomReset}
       />
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />

@@ -1,4 +1,4 @@
-import { FileText, Hash, Type, AlignLeft, Clock, ZoomIn, Eye, Code, Columns } from 'lucide-react';
+import { FileText, Hash, Type, AlignLeft, Clock, ZoomIn, ZoomOut, Eye, Code, Columns } from 'lucide-react';
 import type { ViewMode } from '../Toolbar/ViewModeToggle';
 
 interface StatusBarProps {
@@ -10,6 +10,9 @@ interface StatusBarProps {
   zoom: number;
   isModified: boolean;
   viewMode?: ViewMode;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
+  onZoomReset?: () => void;
 }
 
 export function StatusBar({
@@ -21,6 +24,9 @@ export function StatusBar({
   zoom,
   isModified,
   viewMode = 'preview',
+  onZoomIn,
+  onZoomOut,
+  onZoomReset,
 }: StatusBarProps) {
   const viewModeIcons = {
     preview: <Eye className="w-3 h-3" />,
@@ -71,12 +77,32 @@ export function StatusBar({
           <span>{readingTime} min</span>
         </div>
 
-        <div className="flex items-center gap-1" title="Zoom level">
-          <ZoomIn className="w-3 h-3" />
-          <span>{zoom}%</span>
+        {/* Zoom Controls */}
+        <div className="flex items-center gap-1 border-l border-zinc-800 pl-3">
+          <button
+            onClick={onZoomOut}
+            className="p-0.5 hover:bg-zinc-800 rounded transition-colors"
+            title="Zoom Out (Ctrl+-)"
+          >
+            <ZoomOut className="w-3 h-3" />
+          </button>
+          <button
+            onClick={onZoomReset}
+            className="px-1.5 py-0.5 hover:bg-zinc-800 rounded transition-colors min-w-[40px] text-center"
+            title="Reset Zoom (Ctrl+0)"
+          >
+            {zoom}%
+          </button>
+          <button
+            onClick={onZoomIn}
+            className="p-0.5 hover:bg-zinc-800 rounded transition-colors"
+            title="Zoom In (Ctrl++)"
+          >
+            <ZoomIn className="w-3 h-3" />
+          </button>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 border-l border-zinc-800 pl-3">
           <span
             className={`w-1.5 h-1.5 rounded-full ${
               isModified ? 'bg-amber-500' : 'bg-emerald-500'
