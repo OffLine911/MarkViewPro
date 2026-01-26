@@ -5,6 +5,26 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-01-26
+
+### Improved
+- **Titlebar Design**: Cleaner, more professional titlebar
+  - Removed left-side branding when files are open
+  - "MarkView Pro" title now centered when no files are open
+  - Title disappears when tabs are visible
+  - More space for tabs and controls
+- **Welcome Screen Behavior**: Smarter welcome tab handling
+  - Welcome tab automatically closes when opening first file
+  - Welcome tab closes when creating new document
+  - Welcome tab closes when dropping files
+  - Prevents cluttering workspace with welcome screen
+
+### Technical
+- Added `hasOpenFiles` prop to Titlebar component
+- Improved tab replacement logic for welcome screen
+- Enhanced drag and drop to handle welcome tab closure
+- Cleaner conditional rendering of title vs tabs
+
 ## [1.2.0] - 2026-01-26
 
 ### Added
@@ -142,6 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.2.1]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.1
 [1.2.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.0
 [1.1.7]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.7
 [1.1.6]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.6

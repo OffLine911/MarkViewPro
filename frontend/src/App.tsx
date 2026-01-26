@@ -68,6 +68,11 @@ export default function App() {
 
       const files = e.dataTransfer?.files;
       if (files && files.length > 0) {
+        // If this is the welcome tab and it's not modified, close it before adding new files
+        if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {
+          closeTab(tabs[0].id);
+        }
+
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
@@ -93,7 +98,7 @@ export default function App() {
       document.removeEventListener('dragleave', handleDragLeave);
       document.removeEventListener('drop', handleDrop);
     };
-  }, [addTab]);
+  }, [addTab, closeTab, tabs]);
 
   // Apply zoom level
   useEffect(() => {
@@ -103,14 +108,25 @@ export default function App() {
   const handleOpen = useCallback(async () => {
     const result = await openFile();
     if (result) {
+      // If this is the welcome tab and it's not modified, replace it
+      if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {
+        closeTab(tabs[0].id);
+      }
       addTab(fileName || 'Untitled', filePath, content);
     }
-  }, [openFile, addTab, fileName, filePath, content]);
+  }, [openFile, addTab, closeTab, tabs, fileName, filePath, content]);
 
   const handleNew = useCallback(() => {
+    // If this is the welcome tab and it's not modified, replace it
+    if (tabs.length === 1 && tabs[0].fileName === 'Welcome to MarkView Pro' && !tabs[0].isModified) {
+      closeTab(tabs[0].id);
+    }
     newFile();
     addTab('New Document', null, '');
-  }, [newFile, addTab]);
+  }, [newFile, addTab, closeTab, tabs]);
+
+  // Check if we have any real files open (not just welcome screen)
+  const hasOpenFiles = tabs.length > 1 || (tabs.length === 1 && tabs[0].fileName !== 'Welcome to MarkView Pro');
 
   const handleSave = useCallback(async () => {
     if (filePath) {
@@ -191,8 +207,7 @@ export default function App() {
       )}
 
       <Titlebar
-        fileName={fileName}
-        isModified={isModified}
+        hasOpenFiles={hasOpenFiles}
         onNew={handleNew}
         onOpen={handleOpen}
         onSave={handleSave}
@@ -206,12 +221,14 @@ export default function App() {
         isFullscreen={isFullscreen}
       />
 
-      <TabBar
-        tabs={tabs}
-        activeTabId={activeTabId}
-        onTabClick={setActiveTabId}
-        onTabClose={closeTab}
-      />
+      {hasOpenFiles && (
+        <TabBar
+          tabs={tabs}
+          activeTabId={activeTabId}
+          onTabClick={setActiveTabId}
+          onTabClose={closeTab}
+        />
+      )}
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
