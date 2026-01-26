@@ -4,6 +4,7 @@ import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
 import { CodeBlock } from './CodeBlock';
+import { MermaidDiagram } from './MermaidDiagram';
 import { useSettings } from '../../hooks/useSettings';
 import { Link } from 'lucide-react';
 import type { HeadingItem } from '../../types';
@@ -79,6 +80,11 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
               codeString = children;
             } else {
               codeString = String(children);
+            }
+
+            // Check if it's a mermaid diagram
+            if (match?.[1] === 'mermaid') {
+              return <MermaidDiagram chart={codeString.replace(/\n$/, '')} />;
             }
 
             return (

@@ -71,11 +71,11 @@ export function useTabs() {
     ));
   }, []);
 
-  const updateActiveTab = useCallback((updates: Partial<Tab>) => {
-    if (activeTabId) {
-      updateTab(activeTabId, updates);
-    }
-  }, [activeTabId, updateTab]);
+  const updateTabContent = useCallback((tabId: string, content: string) => {
+    setTabs(prev => prev.map(tab => 
+      tab.id === tabId ? { ...tab, content, isModified: true } : tab
+    ));
+  }, []);
 
   return {
     tabs,
@@ -86,5 +86,6 @@ export function useTabs() {
     closeTab,
     updateTab,
     updateActiveTab,
+    updateTabContent,
   };
 }

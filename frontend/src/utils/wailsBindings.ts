@@ -14,6 +14,11 @@ declare global {
           SaveFileDialog: (defaultName: string) => Promise<string>;
           ReadFileByPath: (path: string) => Promise<{ content: string; path: string; name: string }>;
           ToggleFullscreen: () => void;
+          OpenFolder: () => Promise<FileNode[]>;
+          GetFolderTree: (path: string) => Promise<FileNode[]>;
+          ReadFileFromFolder: (path: string) => Promise<string>;
+          SavePastedImage: (base64Data: string, documentPath: string) => Promise<string>;
+          CopyImageToAssets: (sourcePath: string, documentPath: string) => Promise<string>;
         };
       };
     };
@@ -29,6 +34,13 @@ declare global {
       Quit: () => void;
     };
   }
+}
+
+export interface FileNode {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  children?: FileNode[];
 }
 
 export const wails = {
@@ -196,6 +208,66 @@ export const wails = {
   toggleFullscreen(): void {
     if (window.go?.main?.App?.ToggleFullscreen) {
       window.go.main.App.ToggleFullscreen();
+    }
+  },
+
+  async openFolder(): Promise<FileNode[]> {
+    try {
+      if (window.go?.main?.App?.OpenFolder) {
+        return await window.go.main.App.OpenFolder() || [];
+      }
+      return [];
+    } catch (error) {
+      console.error('Failed to open folder:', error);
+      return [];
+    }
+  },
+
+  async getFolderTree(path: string): Promise<FileNode[]> {
+    try {
+      if (window.go?.main?.App?.GetFolderTree) {
+        return await window.go.main.App.GetFolderTree(path) || [];
+      }
+      return [];
+    } catch (error) {
+      console.error('Failed to get folder tree:', error);
+      return [];
+    }
+  },
+
+  async readFileFromFolder(path: string): Promise<string | null> {
+    try {
+      if (window.go?.main?.App?.ReadFileFromFolder) {
+        return await window.go.main.App.ReadFileFromFolder(path);
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to read file from folder:', error);
+      return null;
+    }
+  },
+
+  async savePastedImage(base64Data: string, documentPath: string): Promise<string | null> {
+    try {
+      if (window.go?.main?.App?.SavePastedImage) {
+        return await window.go.main.App.SavePastedImage(base64Data, documentPath);
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to save pasted image:', error);
+      return null;
+    }
+  },
+
+  async copyImageToAssets(sourcePath: string, documentPath: string): Promise<string | null> {
+    try {
+      if (window.go?.main?.App?.CopyImageToAssets) {
+        return await window.go.main.App.CopyImageToAssets(sourcePath, documentPath);
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to copy image to assets:', error);
+      return null;
     }
   },
 };

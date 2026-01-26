@@ -6,6 +6,10 @@ export function ClearRecentFiles() {
   return window['go']['main']['App']['ClearRecentFiles']();
 }
 
+export function CopyImageToAssets(arg1, arg2) {
+  return window['go']['main']['App']['CopyImageToAssets'](arg1, arg2);
+}
+
 export function ExportContentToPDF(arg1) {
   return window['go']['main']['App']['ExportContentToPDF'](arg1);
 }
@@ -20,6 +24,10 @@ export function ExportToPDF(arg1) {
 
 export function GetCurrentFilePath() {
   return window['go']['main']['App']['GetCurrentFilePath']();
+}
+
+export function GetFolderTree(arg1) {
+  return window['go']['main']['App']['GetFolderTree'](arg1);
 }
 
 export function GetRecentFiles() {
@@ -42,12 +50,20 @@ export function OpenFile() {
   return window['go']['main']['App']['OpenFile']();
 }
 
+export function OpenFolder() {
+  return window['go']['main']['App']['OpenFolder']();
+}
+
 export function OpenRecentFile(arg1) {
   return window['go']['main']['App']['OpenRecentFile'](arg1);
 }
 
 export function ReadFileByPath(arg1) {
   return window['go']['main']['App']['ReadFileByPath'](arg1);
+}
+
+export function ReadFileFromFolder(arg1) {
+  return window['go']['main']['App']['ReadFileFromFolder'](arg1);
 }
 
 export function RenderMarkdown(arg1) {
@@ -60,6 +76,10 @@ export function SaveFile(arg1, arg2) {
 
 export function SaveFileAs(arg1) {
   return window['go']['main']['App']['SaveFileAs'](arg1);
+}
+
+export function SavePastedImage(arg1, arg2) {
+  return window['go']['main']['App']['SavePastedImage'](arg1, arg2);
 }
 
 export function SearchInDocument(arg1, arg2) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { List, Clock, FileText } from 'lucide-react';
+import { List, Clock, FileText, FolderOpen } from 'lucide-react';
 import { TableOfContents } from './TableOfContents';
+import { FileTree, FileNode } from '../FileTree/FileTree';
 import type { HeadingItem, RecentFile } from '../../types';
 
 interface SidebarProps {
@@ -8,13 +9,29 @@ interface SidebarProps {
   onToggle: () => void;
   headings: HeadingItem[];
   recentFiles: RecentFile[];
+  folderTree?: FileNode[];
+  onFileClick?: (path: string) => void;
+  currentFilePath?: string | null;
   onOpenRecentFile?: (path: string) => void;
 }
 
-type TabType = 'toc' | 'recent';
+type TabType = 'toc' | 'recent' | 'files';
 
-export function Sidebar({ isOpen, headings, recentFiles, onOpenRecentFile }: SidebarProps) {
+export function Sidebar({ 
+  isOpen, 
+  headings, 
+  recentFiles, 
+  folderTree = [],
+  onFileClick,
+  currentFilePath,
+  onOpenRecentFile 
+}: SidebarProps) {
   const [activeTab, setActiveTab] = useState<TabType>('toc');
+
+  // Auto-switch to files tab when folder is opened
+  if (folderTree.length > 0 && activeTab !== 'files') {
+    setActiveTab('files');
+  }
 
   return (
     <div 
@@ -31,7 +48,16 @@ export function Sidebar({ isOpen, headings, recentFiles, onOpenRecentFile }: Sid
           >
             <span className="flex items-center justify-center gap-1.5">
               <List className="w-3.5 h-3.5" />
-              Contents
+              TOC
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('files')}
+            className={`sidebar-tab ${activeTab === 'files' ? 'sidebar-tab-active' : 'sidebar-tab-inactive'}`}
+          >
+            <span className="flex items-center justify-center gap-1.5">
+              <FolderOpen className="w-3.5 h-3.5" />
+              Files
             </span>
           </button>
           <button
@@ -46,9 +72,31 @@ export function Sidebar({ isOpen, headings, recentFiles, onOpenRecentFile }: Sid
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'toc' ? (
+          {activeTab === 'toc' && (
             <TableOfContents headings={headings} />
-          ) : (
+          )}
+          
+          {activeTab === 'files' && (
+            <div className="py-1">
+              {folderTree.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-zinc-600">
+                  <FolderOpen className="w-6 h-6 mb-1.5" />
+                  <p className="text-xs text-center px-4">No folder opened</p>
+                  <p className="text-xs text-zinc-700 mt-1 text-center px-4">
+                    Use Ctrl+Shift+O to open a folder
+                  </p>
+                </div>
+              ) : (
+                <FileTree 
+                  nodes={folderTree} 
+                  onFileClick={onFileClick || (() => {})}
+                  selectedPath={currentFilePath || undefined}
+                />
+              )}
+            </div>
+          )}
+          
+          {activeTab === 'recent' && (
             <div className="py-1">
               {recentFiles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-zinc-600">

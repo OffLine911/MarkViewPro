@@ -629,3 +629,52 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Mermaid diagram styles */
+.mermaid-diagram {
+  background: rgba(24, 24, 27, 0.5);
+  border-radius: 0.5rem;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Monaco editor styles */
+.monaco-editor {
+  --vscode-editor-background: #18181b !important;
+}
+
+.monaco-editor .margin {
+  background-color: #18181b !important;
+}
+
+/* Command palette styles */
+.command-palette-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* View mode toggle styles */
+.view-mode-toggle {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* File tree styles */
+.file-tree-node {
+  user-select: none;
+}
+
+/* Split view resizer */
+.split-resizer {
+  cursor: col-resize;
+  user-select: none;
+}
+
+.split-resizer:hover {
+  background-color: #3b82f6;
+}
+
+.split-resizer:active {
+  background-color: #2563eb;
+}

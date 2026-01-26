@@ -1,4 +1,5 @@
-import { FileText, Hash, Type, AlignLeft, Clock, ZoomIn } from 'lucide-react';
+import { FileText, Hash, Type, AlignLeft, Clock, ZoomIn, Eye, Code, Columns } from 'lucide-react';
+import type { ViewMode } from '../Toolbar/ViewModeToggle';
 
 interface StatusBarProps {
   filePath: string | null;
@@ -8,6 +9,7 @@ interface StatusBarProps {
   readingTime: number;
   zoom: number;
   isModified: boolean;
+  viewMode?: ViewMode;
 }
 
 export function StatusBar({
@@ -18,7 +20,20 @@ export function StatusBar({
   readingTime,
   zoom,
   isModified,
+  viewMode = 'preview',
 }: StatusBarProps) {
+  const viewModeIcons = {
+    preview: <Eye className="w-3 h-3" />,
+    editor: <Code className="w-3 h-3" />,
+    split: <Columns className="w-3 h-3" />,
+  };
+
+  const viewModeLabels = {
+    preview: 'Preview',
+    editor: 'Editor',
+    split: 'Split',
+  };
+
   return (
     <div className="statusbar">
       <div className="flex items-center gap-3">
@@ -27,6 +42,11 @@ export function StatusBar({
           <span className="truncate max-w-[200px]">
             {filePath ? filePath.split(/[/\\]/).pop() : 'No file open'}
           </span>
+        </div>
+
+        <div className="flex items-center gap-1" title="View mode">
+          {viewModeIcons[viewMode]}
+          <span>{viewModeLabels[viewMode]}</span>
         </div>
       </div>
 

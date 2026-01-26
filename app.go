@@ -5,6 +5,8 @@ import (
 
 	"markviewpro/internal/exporter"
 	"markviewpro/internal/filemanager"
+	"markviewpro/internal/foldermanager"
+	"markviewpro/internal/imagemanager"
 	"markviewpro/internal/markdown"
 	"markviewpro/internal/settings"
 
@@ -12,25 +14,30 @@ import (
 )
 
 type App struct {
-	ctx         context.Context
-	renderer    *markdown.Renderer
-	fileManager *filemanager.FileManager
-	settings    *settings.Settings
-	exporter    *exporter.Exporter
+	ctx           context.Context
+	renderer      *markdown.Renderer
+	fileManager   *filemanager.FileManager
+	folderManager *foldermanager.FolderManager
+	imageManager  *imagemanager.ImageManager
+	settings      *settings.Settings
+	exporter      *exporter.Exporter
 }
 
 func NewApp() *App {
 	return &App{
-		renderer:    markdown.NewRenderer(),
-		fileManager: filemanager.NewFileManager(),
-		settings:    settings.NewSettings(),
-		exporter:    exporter.NewExporter(),
+		renderer:      markdown.NewRenderer(),
+		fileManager:   filemanager.NewFileManager(),
+		folderManager: foldermanager.NewFolderManager(),
+		imageManager:  imagemanager.NewImageManager(),
+		settings:      settings.NewSettings(),
+		exporter:      exporter.NewExporter(),
 	}
 }
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	a.fileManager.SetContext(ctx)
+	a.folderManager.SetContext(ctx)
 	a.settings.Load()
 }
 
@@ -270,3 +277,36 @@ func (a *App) ExportContentToPDF(content string) error {
 func (a *App) ToggleFullscreen() {
 	runtime.WindowToggleMaximise(a.ctx)
 }
+
+// Folder operations
+func (a *App) OpenFolder() ([]foldermanager.FileNode, error) {
+	folder, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Open Folder",
+	})
+	if err != nil {
+		return nil, err
+	}
+	if folder == "" {
+		return nil, nil
+	}
+
+	return a.folderManager.OpenFolder(folder)
+}
+
+func (a *App) GetFolderTree(path string) ([]foldermanager.FileNode, error) {
+	return a.folderManager.OpenFolder(path)
+}
+
+func (a *App) ReadFileFromFolder(path string) (string, error) {
+	return a.folderManager.ReadFile(path)
+}
+
+// Image operations
+func (a *App) SavePastedImage(base64Data, documentPath string) (string, error) {
+	return a.imageManager.SaveBase64Image(base64Data, documentPath)
+}
+
+func (a *App) CopyImageToAssets(sourcePath, documentPath string) (string, error) {
+	return a.imageManager.CopyImageToAssets(sourcePath, documentPath)
+}
+
