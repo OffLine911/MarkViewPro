@@ -149,6 +149,7 @@ export namespace settings {
 	    previewTheme: string;
 	    autoSave: boolean;
 	    autoSaveDelay: number;
+	    autoReload: boolean;
 	    syncScroll: boolean;
 	    showLineNumbers: boolean;
 	    wordWrap: boolean;
@@ -168,6 +169,7 @@ export namespace settings {
 	        this.previewTheme = source["previewTheme"];
 	        this.autoSave = source["autoSave"];
 	        this.autoSaveDelay = source["autoSaveDelay"];
+	        this.autoReload = source["autoReload"];
 	        this.syncScroll = source["syncScroll"];
 	        this.showLineNumbers = source["showLineNumbers"];
 	        this.wordWrap = source["wordWrap"];
