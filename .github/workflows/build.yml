@@ -90,8 +90,20 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir -p release
+          ls -la artifacts/
+          ls -la artifacts/MarkViewPro-windows/ || true
+          ls -la artifacts/MarkViewPro-macos/ || true
+          ls -la artifacts/MarkViewPro-linux/ || true
+          
+          # Copy Windows executable
           cp artifacts/MarkViewPro-windows/MarkViewPro.exe release/MarkViewPro-windows-amd64.exe
-          cd artifacts/MarkViewPro-macos && zip -r ../../release/MarkViewPro-macos-amd64.zip MarkViewPro.app && cd ../..
+          
+          # Zip macOS app bundle
+          cd artifacts/MarkViewPro-macos
+          zip -r ../../release/MarkViewPro-macos-amd64.zip .
+          cd ../..
+          
+          # Copy Linux executable
           cp artifacts/MarkViewPro-linux/MarkViewPro release/MarkViewPro-linux-amd64
           chmod +x release/MarkViewPro-linux-amd64
 
