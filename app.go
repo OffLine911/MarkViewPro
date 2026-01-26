@@ -34,12 +34,23 @@ func (a *App) startup(ctx context.Context) {
 	a.settings.Load()
 }
 
+func (a *App) domReady(ctx context.Context) {
+	// Enable drag and drop
+	runtime.EventsOn(ctx, "wails:file-drop", func(data ...interface{}) {
+		if len(data) > 0 {
+			if filePath, ok := data[0].(string); ok {
+				runtime.EventsEmit(ctx, "file-dropped", filePath)
+			}
+		}
+	})
+}
+
 func (a *App) shutdown(ctx context.Context) {
 	a.fileManager.StopWatching()
 	a.settings.Save()
 }
 
-func (a *App) OpenFile() (string, error) {
+func (a *App) OpenFile() (map[string]string, error) {
 	file, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Open Markdown File",
 		Filters: []runtime.FileFilter{
@@ -48,18 +59,31 @@ func (a *App) OpenFile() (string, error) {
 		},
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if file == "" {
-		return "", nil
+		return nil, nil
 	}
 
 	content, err := a.fileManager.OpenFile(file)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return content, nil
+	// Extract filename from path
+	filename := file
+	for i := len(file) - 1; i >= 0; i-- {
+		if file[i] == '/' || file[i] == '\\' {
+			filename = file[i+1:]
+			break
+		}
+	}
+
+	return map[string]string{
+		"content": content,
+		"path":    file,
+		"name":    filename,
+	}, nil
 }
 
 func (a *App) SaveFile(path, content string) error {
@@ -117,8 +141,26 @@ func (a *App) OpenRecentFile(path string) (string, error) {
 	return a.fileManager.OpenFile(path)
 }
 
-func (a *App) ReadFileByPath(path string) (string, error) {
-	return a.fileManager.OpenFile(path)
+func (a *App) ReadFileByPath(path string) (map[string]string, error) {
+	content, err := a.fileManager.OpenFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Extract filename from path
+	filename := path
+	for i := len(path) - 1; i >= 0; i-- {
+		if path[i] == '/' || path[i] == '\\' {
+			filename = path[i+1:]
+			break
+		}
+	}
+
+	return map[string]string{
+		"content": content,
+		"path":    path,
+		"name":    filename,
+	}, nil
 }
 
 func (a *App) ClearRecentFiles() {
@@ -149,48 +191,39 @@ func (a *App) ExportToHTML(content, outputPath string) error {
 	return a.exporter.ToHTML(html, outputPath)
 }
 
-func (a *App) ExportToPDF(content, outputPath string) error {
+func (a *App) ExportToPDF(filePath string) error {
+	if filePath == "" {
+		return nil
+	}
+
+	content, err := a.fileManager.OpenFile(filePath)
+	if err != nil {
+		return err
+	}
+
 	html, err := a.renderer.Render(content)
 	if err != nil {
 		return err
 	}
-	return a.exporter.ToPDF(html, outputPath)
-}
 
-func (a *App) ExportDialog(content, format string) error {
-	var defaultFilename string
-	var filter runtime.FileFilter
-
-	switch format {
-	case "html":
-		defaultFilename = "export.html"
-		filter = runtime.FileFilter{DisplayName: "HTML Files", Pattern: "*.html"}
-	case "pdf":
-		defaultFilename = "export.pdf"
-		filter = runtime.FileFilter{DisplayName: "PDF Files", Pattern: "*.pdf"}
-	default:
-		defaultFilename = "export.html"
-		filter = runtime.FileFilter{DisplayName: "HTML Files", Pattern: "*.html"}
-	}
-
-	file, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-		Title:           "Export Document",
-		DefaultFilename: defaultFilename,
-		Filters:         []runtime.FileFilter{filter},
+	// Show save dialog for PDF
+	outputPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:           "Export to PDF",
+		DefaultFilename: "export.pdf",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "PDF Files", Pattern: "*.pdf"},
+		},
 	})
 	if err != nil {
 		return err
 	}
-	if file == "" {
+	if outputPath == "" {
 		return nil
 	}
 
-	switch format {
-	case "html":
-		return a.ExportToHTML(content, file)
-	case "pdf":
-		return a.ExportToPDF(content, file)
-	default:
-		return a.ExportToHTML(content, file)
-	}
+	return a.exporter.ToPDF(html, outputPath)
+}
+
+func (a *App) ToggleFullscreen() {
+	runtime.WindowToggleMaximise(a.ctx)
 }

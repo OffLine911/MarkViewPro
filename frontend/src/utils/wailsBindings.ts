@@ -10,7 +10,8 @@ declare global {
           GetRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: string }>>;
           OpenFileDialog: () => Promise<string>;
           SaveFileDialog: (defaultName: string) => Promise<string>;
-          ReadFileByPath: (path: string) => Promise<string>;
+          ReadFileByPath: (path: string) => Promise<{ content: string; path: string; name: string }>;
+          ToggleFullscreen: () => void;
         };
       };
     };
@@ -32,7 +33,9 @@ export const wails = {
   async openFile(): Promise<{ content: string; path: string; name: string } | null> {
     try {
       if (window.go?.main?.App?.OpenFile) {
-        return await window.go.main.App.OpenFile();
+        const result = await window.go.main.App.OpenFile();
+        if (!result) return null;
+        return result as { content: string; path: string; name: string };
       }
       return null;
     } catch (error) {
@@ -123,9 +126,9 @@ export const wails = {
   async readFileByPath(path: string): Promise<{ content: string; path: string; name: string } | null> {
     try {
       if (window.go?.main?.App?.ReadFileByPath) {
-        const content = await window.go.main.App.ReadFileByPath(path);
-        const name = path.split(/[/\\]/).pop() || 'Unknown';
-        return { content, path, name };
+        const result = await window.go.main.App.ReadFileByPath(path);
+        if (!result) return null;
+        return result as { content: string; path: string; name: string };
       }
       return null;
     } catch (error) {
@@ -160,6 +163,12 @@ export const wails = {
 
   quit(): void {
     window.runtime?.Quit();
+  },
+
+  toggleFullscreen(): void {
+    if (window.go?.main?.App?.ToggleFullscreen) {
+      window.go.main.App.ToggleFullscreen();
+    }
   },
 };
 

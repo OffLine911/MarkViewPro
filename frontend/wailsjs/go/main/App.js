@@ -6,16 +6,12 @@ export function ClearRecentFiles() {
   return window['go']['main']['App']['ClearRecentFiles']();
 }
 
-export function ExportDialog(arg1, arg2) {
-  return window['go']['main']['App']['ExportDialog'](arg1, arg2);
-}
-
 export function ExportToHTML(arg1, arg2) {
   return window['go']['main']['App']['ExportToHTML'](arg1, arg2);
 }
 
-export function ExportToPDF(arg1, arg2) {
-  return window['go']['main']['App']['ExportToPDF'](arg1, arg2);
+export function ExportToPDF(arg1) {
+  return window['go']['main']['App']['ExportToPDF'](arg1);
 }
 
 export function GetCurrentFilePath() {
@@ -72,6 +68,10 @@ export function StartWatching(arg1) {
 
 export function StopWatching() {
   return window['go']['main']['App']['StopWatching']();
+}
+
+export function ToggleFullscreen() {
+  return window['go']['main']['App']['ToggleFullscreen']();
 }
 
 export function UpdateSettings(arg1) {

@@ -16,14 +16,14 @@ func main() {
 	app := NewApp()
 
 	err := wails.Run(&options.App{
-		Title:            "MarkViewPro",
-		Width:            1200,
-		Height:           800,
-		MinWidth:         800,
-		MinHeight:        600,
-		DisableResize:    false,
-		Frameless:        true,
-		StartHidden:      false,
+		Title:             "MarkViewPro",
+		Width:             1200,
+		Height:            800,
+		MinWidth:          800,
+		MinHeight:         600,
+		DisableResize:     false,
+		Frameless:         true,
+		StartHidden:       false,
 		HideWindowOnClose: false,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
@@ -31,6 +31,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 12, G: 12, B: 16, A: 1},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
+		OnDomReady:       app.domReady,
 		Bind: []interface{}{
 			app,
 		},
@@ -39,6 +40,8 @@ func main() {
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
 		},
+		EnableDefaultContextMenu: false,
+		EnableFraudulentWebsiteDetection: false,
 	})
 
 	if err != nil {

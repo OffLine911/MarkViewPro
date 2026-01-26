@@ -6,11 +6,9 @@ import {markdown} from '../models';
 
 export function ClearRecentFiles():Promise<void>;
 
-export function ExportDialog(arg1:string,arg2:string):Promise<void>;
-
 export function ExportToHTML(arg1:string,arg2:string):Promise<void>;
 
-export function ExportToPDF(arg1:string,arg2:string):Promise<void>;
+export function ExportToPDF(arg1:string):Promise<void>;
 
 export function GetCurrentFilePath():Promise<string>;
 
@@ -22,11 +20,11 @@ export function GetTableOfContents(arg1:string):Promise<Array<markdown.TOCItem>>
 
 export function GetWordCount(arg1:string):Promise<markdown.Stats>;
 
-export function OpenFile():Promise<string>;
+export function OpenFile():Promise<Record<string, string>>;
 
 export function OpenRecentFile(arg1:string):Promise<string>;
 
-export function ReadFileByPath(arg1:string):Promise<string>;
+export function ReadFileByPath(arg1:string):Promise<Record<string, string>>;
 
 export function RenderMarkdown(arg1:string):Promise<string>;
 
@@ -39,5 +37,7 @@ export function SearchInDocument(arg1:string,arg2:string):Promise<Array<markdown
 export function StartWatching(arg1:string):Promise<void>;
 
 export function StopWatching():Promise<void>;
+
+export function ToggleFullscreen():Promise<void>;
 
 export function UpdateSettings(arg1:settings.UserSettings):Promise<void>;

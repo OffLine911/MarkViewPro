@@ -5,6 +5,23 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-01-26
+
+### Fixed
+- **Drag & Drop**: Properly implemented file drag and drop functionality - now works correctly when dragging .md files onto the window
+- **Save Function**: Fixed save functionality to properly persist file changes
+- **Export Functions**: Fixed PDF and HTML export to properly handle file content and show save dialogs
+- **Fullscreen Toggle**: Fixed fullscreen button to properly maximize/restore window in frameless mode
+- **File Opening**: Fixed OpenFile to return proper file object with path, name, and content
+- **ReadFileByPath**: Now returns complete file information instead of just content
+
+### Technical
+- Updated Go backend to return structured file data (map with content, path, name)
+- Added domReady handler for drag and drop event initialization
+- Improved Wails bindings to handle new return types
+- Added ToggleFullscreen method for proper window maximize/restore
+- Enhanced error handling in file operations
+
 ## [1.1.0] - 2026-01-26
 
 ### Added
@@ -57,5 +74,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.1.5]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.5
 [1.1.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.0
 [1.0.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.0.0

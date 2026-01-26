@@ -41,9 +41,26 @@ export default function App() {
     headings,
     stats,
     openFile,
+    openFileByPath,
     saveFile,
     newFile,
   } = useMarkdown();
+
+  // Listen for file drop events
+  useEffect(() => {
+    const handleFileDrop = (...args: unknown[]) => {
+      const filePath = args[0] as string;
+      if (filePath && (filePath.endsWith('.md') || filePath.endsWith('.markdown'))) {
+        openFileByPath(filePath);
+      }
+    };
+
+    wails.onEvent('file-dropped', handleFileDrop);
+
+    return () => {
+      wails.offEvent('file-dropped');
+    };
+  }, [openFileByPath]);
 
   const handleOpen = useCallback(async () => {
     await openFile();
@@ -80,16 +97,9 @@ export default function App() {
     window.print();
   }, []);
 
-  const handleToggleFullscreen = useCallback(async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch (err) {
-      console.error('Fullscreen error:', err);
-    }
+  const handleToggleFullscreen = useCallback(() => {
+    wails.toggleFullscreen();
+    setIsFullscreen(prev => !prev);
   }, []);
 
   const handleToggleSearch = useCallback(() => {
