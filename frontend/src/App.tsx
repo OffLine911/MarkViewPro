@@ -568,19 +568,22 @@ export default function App() {
         </main>
       </div>
 
-      <StatusBar
-        filePath={activeTab?.filePath || filePath}
-        wordCount={activeStats.wordCount}
-        characterCount={activeStats.characterCount}
-        lineCount={activeStats.lineCount}
-        readingTime={Math.ceil(activeStats.wordCount / 200)}
-        zoom={zoom}
-        isModified={activeTab?.isModified || isModified}
-        viewMode={viewMode}
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onZoomReset={handleZoomReset}
-      />
+      {/* Only show StatusBar when files are open */}
+      {tabs.length > 0 && (
+        <StatusBar
+          filePath={activeTab?.filePath || filePath}
+          wordCount={activeStats.wordCount}
+          characterCount={activeStats.characterCount}
+          lineCount={activeStats.lineCount}
+          readingTime={Math.ceil(activeStats.wordCount / 200)}
+          zoom={zoom}
+          isModified={activeTab?.isModified || isModified}
+          viewMode={viewMode}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          onZoomReset={handleZoomReset}
+        />
+      )}
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <CommandPalette 
