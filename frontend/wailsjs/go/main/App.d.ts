@@ -19,6 +19,8 @@ export function GetCurrentFilePath():Promise<string>;
 
 export function GetFolderTree(arg1:string):Promise<Array<foldermanager.FileNode>>;
 
+export function GetInitialFile():Promise<string>;
+
 export function GetRecentFiles():Promise<Array<filemanager.RecentFile>>;
 
 export function GetSettings():Promise<settings.UserSettings>;

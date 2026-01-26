@@ -30,6 +30,10 @@ export function GetFolderTree(arg1) {
   return window['go']['main']['App']['GetFolderTree'](arg1);
 }
 
+export function GetInitialFile() {
+  return window['go']['main']['App']['GetInitialFile']();
+}
+
 export function GetRecentFiles() {
   return window['go']['main']['App']['GetRecentFiles']();
 }

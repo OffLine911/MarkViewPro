@@ -19,6 +19,7 @@ declare global {
           ReadFileFromFolder: (path: string) => Promise<string>;
           SavePastedImage: (base64Data: string, documentPath: string) => Promise<string>;
           CopyImageToAssets: (sourcePath: string, documentPath: string) => Promise<string>;
+          GetInitialFile: () => Promise<string>;
         };
       };
     };
@@ -267,6 +268,19 @@ export const wails = {
       return null;
     } catch (error) {
       console.error('Failed to copy image to assets:', error);
+      return null;
+    }
+  },
+
+  async getInitialFile(): Promise<string | null> {
+    try {
+      if (window.go?.main?.App?.GetInitialFile) {
+        const path = await window.go.main.App.GetInitialFile();
+        return path || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to get initial file:', error);
       return null;
     }
   },

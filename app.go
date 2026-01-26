@@ -21,6 +21,7 @@ type App struct {
 	imageManager  *imagemanager.ImageManager
 	settings      *settings.Settings
 	exporter      *exporter.Exporter
+	initialFile   string
 }
 
 func NewApp() *App {
@@ -39,6 +40,10 @@ func (a *App) startup(ctx context.Context) {
 	a.fileManager.SetContext(ctx)
 	a.folderManager.SetContext(ctx)
 	a.settings.Load()
+}
+
+func (a *App) GetInitialFile() string {
+	return a.initialFile
 }
 
 func (a *App) domReady(ctx context.Context) {

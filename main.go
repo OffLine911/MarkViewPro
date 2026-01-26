@@ -2,6 +2,9 @@ package main
 
 import (
 	"embed"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,7 +16,19 @@ import (
 var assets embed.FS
 
 func main() {
+	var initialFile string
+	if len(os.Args) > 1 {
+		arg := os.Args[1]
+		ext := strings.ToLower(filepath.Ext(arg))
+		if ext == ".md" || ext == ".markdown" {
+			if absPath, err := filepath.Abs(arg); err == nil {
+				initialFile = absPath
+			}
+		}
+	}
+
 	app := NewApp()
+	app.initialFile = initialFile
 
 	err := wails.Run(&options.App{
 		Title:             "MarkViewPro",

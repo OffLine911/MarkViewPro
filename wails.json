@@ -28,5 +28,21 @@
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
     "runAfterFinish": true
-  }
+  },
+  "fileAssociations": [
+    {
+      "ext": "md",
+      "name": "MarkdownFile",
+      "description": "Markdown Document",
+      "iconName": "markdown",
+      "role": "Viewer"
+    },
+    {
+      "ext": "markdown",
+      "name": "MarkdownFile",
+      "description": "Markdown Document",
+      "iconName": "markdown",
+      "role": "Viewer"
+    }
+  ]
 }

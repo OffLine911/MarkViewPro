@@ -96,6 +96,20 @@ export default function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Handle file opened from CLI (file association)
+  useEffect(() => {
+    const loadInitialFile = async () => {
+      const initialPath = await wails.getInitialFile();
+      if (initialPath) {
+        const result = await wails.readFileByPath(initialPath);
+        if (result) {
+          addTab(result.name, result.path, result.content);
+        }
+      }
+    };
+    loadInitialFile();
+  }, [addTab]);
+
   // Handle image paste
   useEffect(() => {
     const handlePaste = async (e: ClipboardEvent) => {
