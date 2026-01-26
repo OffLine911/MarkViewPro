@@ -73,8 +73,13 @@ export function SearchBar({ isOpen, onClose, content }: SearchBarProps) {
     marks.forEach((mark) => {
       const parent = mark.parentNode;
       if (parent) {
-        parent.replaceChild(document.createTextNode(mark.textContent || ''), mark);
-        parent.normalize();
+        try {
+          parent.replaceChild(document.createTextNode(mark.textContent || ''), mark);
+          parent.normalize();
+        } catch (e) {
+          // Ignore errors if the node is no longer in the DOM
+          console.warn('Failed to clear highlight:', e);
+        }
       }
     });
   }, []);
@@ -181,7 +186,10 @@ export function SearchBar({ isOpen, onClose, content }: SearchBarProps) {
 
   useEffect(() => {
     if (!isOpen) {
-      clearHighlights();
+      // Use setTimeout to ensure DOM operations happen after React updates
+      setTimeout(() => {
+        clearHighlights();
+      }, 0);
       setQuery('');
       setMatches([]);
     }

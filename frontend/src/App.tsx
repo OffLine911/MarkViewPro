@@ -267,7 +267,7 @@ export default function App() {
 
         <main className="flex-1 overflow-y-auto main-content relative">
           <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeContent} />
-          <MarkdownViewer content={activeContent} headings={activeHeadings} />
+          <MarkdownViewer key={searchOpen ? 'search-open' : 'search-closed'} content={activeContent} headings={activeHeadings} />
         </main>
       </div>
 
