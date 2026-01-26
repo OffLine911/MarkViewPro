@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { defaultMarkdown } from './useMarkdown';
 
 export interface Tab {
   id: string;
@@ -14,7 +15,7 @@ export function useTabs() {
       id: '1',
       fileName: 'Welcome to MarkView Pro',
       filePath: null,
-      content: '',
+      content: defaultMarkdown,
       isModified: false,
     },
   ]);
@@ -58,7 +59,7 @@ export function useTabs() {
         id: Date.now().toString(),
         fileName: 'Welcome to MarkView Pro',
         filePath: null,
-        content: '',
+        content: defaultMarkdown,
         isModified: false,
       }] : newTabs;
     });

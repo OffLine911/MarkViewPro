@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import type { MarkdownState, HeadingItem } from '../types';
 import { wails } from '../utils/wailsBindings';
 
-const defaultMarkdown = `# 👋 Welcome to MarkView Pro
+export const defaultMarkdown = `# 👋 Welcome to MarkView Pro
 
 A modern, powerful Markdown viewer and editor built with Wails and React.
 

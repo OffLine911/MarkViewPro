@@ -5,6 +5,22 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-01-26
+
+### Fixed
+- **Sidebar Collapsed by Default**: Sidebar now starts collapsed for cleaner initial view
+- **Tab Content Switching**: Fixed content not updating when switching between tabs
+  - Each tab now properly displays its own content
+  - Headings update correctly per tab
+  - Stats (word count, character count, etc.) update per tab
+  - Welcome message no longer persists when switching tabs
+
+### Technical
+- Added `activeContent`, `activeHeadings`, and `activeStats` computed from active tab
+- Welcome tab now loads with full welcome markdown content
+- Exported `defaultMarkdown` from useMarkdown hook
+- Proper content synchronization between tabs and viewer
+
 ## [1.2.2] - 2026-01-26
 
 ### Improved
@@ -177,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.2.3]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.3
 [1.2.2]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.2
 [1.2.1]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.1
 [1.2.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.0

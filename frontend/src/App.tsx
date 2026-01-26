@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Titlebar } from './components/Titlebar/Titlebar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
@@ -12,7 +12,7 @@ import { wails } from './utils/wailsBindings';
 import type { RecentFile } from './types';
 
 export default function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Changed to false - collapsed by default
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [recentFiles] = useState<RecentFile[]>([]);
@@ -27,12 +27,45 @@ export default function App() {
     filePath,
     fileName,
     isModified,
-    headings,
-    stats,
     openFile,
     saveFile,
     newFile,
   } = useMarkdown();
+
+  // Extract headings from active tab content
+  const activeContent = activeTab?.content || content;
+  const activeHeadings = useMemo(() => {
+    const lines = activeContent.split('\n');
+    const headings: Array<{ id: string; text: string; level: number }> = [];
+    
+    lines.forEach((line, index) => {
+      const match = line.match(/^(#{1,6})\s+(.+)$/);
+      if (match) {
+        const level = match[1].length;
+        const text = match[2].trim();
+        const id = `heading-${index}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        headings.push({ id, text, level });
+      }
+    });
+    
+    return headings;
+  }, [activeContent]);
+
+  // Calculate stats for active tab
+  const activeStats = useMemo(() => {
+    const wordCount = activeContent
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/`[^`]+`/g, '')
+      .replace(/[#*_\[\]()]/g, '')
+      .trim()
+      .split(/\s+/)
+      .filter(word => word.length > 0).length;
+    
+    const characterCount = activeContent.replace(/\s/g, '').length;
+    const lineCount = activeContent.split('\n').length;
+    
+    return { wordCount, characterCount, lineCount };
+  }, [activeContent]);
 
   // Listen for fullscreen changes
   useEffect(() => {
@@ -228,22 +261,22 @@ export default function App() {
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={handleToggleSidebar}
-          headings={headings}
+          headings={activeHeadings}
           recentFiles={recentFiles}
         />
 
         <main className="flex-1 overflow-y-auto main-content relative">
-          <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeTab?.content || content} />
-          <MarkdownViewer content={activeTab?.content || content} headings={headings} />
+          <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeContent} />
+          <MarkdownViewer content={activeContent} headings={activeHeadings} />
         </main>
       </div>
 
       <StatusBar
         filePath={activeTab?.filePath || filePath}
-        wordCount={stats.wordCount}
-        characterCount={stats.characterCount}
-        lineCount={stats.lineCount}
-        readingTime={Math.ceil(stats.wordCount / 200)}
+        wordCount={activeStats.wordCount}
+        characterCount={activeStats.characterCount}
+        lineCount={activeStats.lineCount}
+        readingTime={Math.ceil(activeStats.wordCount / 200)}
         zoom={zoom}
         isModified={activeTab?.isModified || isModified}
       />
