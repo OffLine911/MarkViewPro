@@ -134,6 +134,16 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
               />
             </label>
+
+            <label className="flex items-center justify-between p-2.5 bg-zinc-800/50 rounded cursor-pointer hover:bg-zinc-800 transition-colors">
+              <span className="text-xs text-zinc-300">Auto-reload on file change</span>
+              <input
+                type="checkbox"
+                checked={settings.autoReload}
+                onChange={(e) => updateSettings({ autoReload: e.target.checked })}
+                className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
+              />
+            </label>
           </div>
         </div>
 

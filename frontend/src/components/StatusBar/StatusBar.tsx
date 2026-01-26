@@ -1,10 +1,12 @@
-import { FileText, Hash, Type, AlignLeft } from 'lucide-react';
+import { FileText, Hash, Type, AlignLeft, Clock, ZoomIn } from 'lucide-react';
 
 interface StatusBarProps {
   filePath: string | null;
   wordCount: number;
   characterCount: number;
   lineCount: number;
+  readingTime: number;
+  zoom: number;
   isModified: boolean;
 }
 
@@ -13,6 +15,8 @@ export function StatusBar({
   wordCount,
   characterCount,
   lineCount,
+  readingTime,
+  zoom,
   isModified,
 }: StatusBarProps) {
   return (
@@ -40,6 +44,16 @@ export function StatusBar({
         <div className="flex items-center gap-1" title="Characters">
           <Hash className="w-3 h-3" />
           <span>{characterCount}</span>
+        </div>
+
+        <div className="flex items-center gap-1" title="Reading time (200 words/min)">
+          <Clock className="w-3 h-3" />
+          <span>{readingTime} min</span>
+        </div>
+
+        <div className="flex items-center gap-1" title="Zoom level">
+          <ZoomIn className="w-3 h-3" />
+          <span>{zoom}%</span>
         </div>
 
         <div className="flex items-center gap-1.5">

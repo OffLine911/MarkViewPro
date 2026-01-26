@@ -26,6 +26,8 @@ export function OpenFile():Promise<string>;
 
 export function OpenRecentFile(arg1:string):Promise<string>;
 
+export function ReadFileByPath(arg1:string):Promise<string>;
+
 export function RenderMarkdown(arg1:string):Promise<string>;
 
 export function SaveFile(arg1:string,arg2:string):Promise<void>;

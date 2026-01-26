@@ -46,6 +46,10 @@ export function OpenRecentFile(arg1) {
   return window['go']['main']['App']['OpenRecentFile'](arg1);
 }
 
+export function ReadFileByPath(arg1) {
+  return window['go']['main']['App']['ReadFileByPath'](arg1);
+}
+
 export function RenderMarkdown(arg1) {
   return window['go']['main']['App']['RenderMarkdown'](arg1);
 }

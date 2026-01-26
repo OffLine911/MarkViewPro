@@ -3,6 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Copy, Check } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings';
+import { MermaidBlock } from './MermaidBlock';
 
 interface CodeBlockProps {
   language?: string;
@@ -12,6 +13,10 @@ interface CodeBlockProps {
 export function CodeBlock({ language, children }: CodeBlockProps) {
   const { settings } = useSettings();
   const [copied, setCopied] = useState(false);
+
+  if (language === 'mermaid') {
+    return <MermaidBlock>{children}</MermaidBlock>;
+  }
 
   const handleCopy = async () => {
     try {

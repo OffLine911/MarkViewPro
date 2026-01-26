@@ -40,6 +40,12 @@ export function useAppKeyboard({
   onToggleSidebar,
   onToggleSettings,
   onNew,
+  onPrint,
+  onToggleFullscreen,
+  onToggleSearch,
+  onZoomIn,
+  onZoomOut,
+  onZoomReset,
 }: {
   onOpen: () => void;
   onSave: () => void;
@@ -47,6 +53,12 @@ export function useAppKeyboard({
   onToggleSidebar: () => void;
   onToggleSettings: () => void;
   onNew: () => void;
+  onPrint: () => void;
+  onToggleFullscreen: () => void;
+  onToggleSearch: () => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onZoomReset: () => void;
 }) {
   const shortcuts: KeyboardShortcut[] = [
     { key: 'o', ctrl: true, action: onOpen, description: 'Open file' },
@@ -55,6 +67,12 @@ export function useAppKeyboard({
     { key: 'b', ctrl: true, action: onToggleSidebar, description: 'Toggle sidebar' },
     { key: ',', ctrl: true, action: onToggleSettings, description: 'Open settings' },
     { key: 'n', ctrl: true, action: onNew, description: 'New file' },
+    { key: 'p', ctrl: true, action: onPrint, description: 'Print' },
+    { key: 'f', ctrl: true, action: onToggleSearch, description: 'Search' },
+    { key: 'F11', action: onToggleFullscreen, description: 'Toggle fullscreen' },
+    { key: '=', ctrl: true, action: onZoomIn, description: 'Zoom in' },
+    { key: '-', ctrl: true, action: onZoomOut, description: 'Zoom out' },
+    { key: '0', ctrl: true, action: onZoomReset, description: 'Reset zoom' },
   ];
 
   return useKeyboard(shortcuts);

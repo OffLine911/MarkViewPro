@@ -15,6 +15,9 @@ import {
   PanelLeftClose,
   PanelLeft,
   Copy,
+  Printer,
+  Maximize,
+  Minimize2,
 } from 'lucide-react';
 import { useSettings } from '../../hooks/useSettings';
 
@@ -28,7 +31,10 @@ interface TitlebarProps {
   onExportHTML: () => void;
   onOpenSettings: () => void;
   onToggleSidebar: () => void;
+  onPrint: () => void;
+  onToggleFullscreen: () => void;
   sidebarOpen: boolean;
+  isFullscreen: boolean;
 }
 
 export function Titlebar({
@@ -41,7 +47,10 @@ export function Titlebar({
   onExportHTML,
   onOpenSettings,
   onToggleSidebar,
+  onPrint,
+  onToggleFullscreen,
   sidebarOpen,
+  isFullscreen,
 }: TitlebarProps) {
   const { settings, updateSettings, isDark } = useSettings();
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
@@ -150,6 +159,16 @@ export function Titlebar({
       </div>
 
       <div className="flex items-center gap-0.5 wails-no-drag">
+        <button onClick={onPrint} className="titlebar-btn" title="Print (Ctrl+P)">
+          <Printer className="w-4 h-4" />
+        </button>
+
+        <button onClick={onToggleFullscreen} className="titlebar-btn" title="Fullscreen (F11)">
+          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+        </button>
+
+        <div className="h-4 w-px bg-zinc-700 mx-1" />
+
         <button onClick={toggleTheme} className="titlebar-btn" title="Toggle theme">
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>

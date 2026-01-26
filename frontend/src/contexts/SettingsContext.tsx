@@ -10,6 +10,7 @@ const defaultSettings: Settings = {
   showLineNumbers: true,
   autoSave: false,
   wordWrap: true,
+  autoReload: true,
 };
 
 interface SettingsContextType {

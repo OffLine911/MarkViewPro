@@ -10,6 +10,7 @@ declare global {
           GetRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: string }>>;
           OpenFileDialog: () => Promise<string>;
           SaveFileDialog: (defaultName: string) => Promise<string>;
+          ReadFileByPath: (path: string) => Promise<string>;
         };
       };
     };
@@ -115,6 +116,20 @@ export const wails = {
       return null;
     } catch (error) {
       console.error('Failed to open save dialog:', error);
+      return null;
+    }
+  },
+
+  async readFileByPath(path: string): Promise<{ content: string; path: string; name: string } | null> {
+    try {
+      if (window.go?.main?.App?.ReadFileByPath) {
+        const content = await window.go.main.App.ReadFileByPath(path);
+        const name = path.split(/[/\\]/).pop() || 'Unknown';
+        return { content, path, name };
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to read file:', error);
       return null;
     }
   },

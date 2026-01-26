@@ -117,6 +117,23 @@ export function useMarkdown() {
     return false;
   }, []);
 
+  const openFileByPath = useCallback(async (path: string) => {
+    const result = await wails.readFileByPath(path);
+    if (result) {
+      setState({
+        content: result.content,
+        filePath: result.path,
+        fileName: result.name,
+        isModified: false,
+        wordCount: countWords(result.content),
+        characterCount: countCharacters(result.content),
+        headings: extractHeadings(result.content),
+      });
+      return true;
+    }
+    return false;
+  }, []);
+
   const saveFile = useCallback(async () => {
     if (!state.filePath) return false;
     const success = await wails.saveFile(state.filePath, state.content);
@@ -153,6 +170,7 @@ export function useMarkdown() {
     stats,
     updateContent,
     openFile,
+    openFileByPath,
     saveFile,
     newFile,
   };

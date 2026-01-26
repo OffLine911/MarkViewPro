@@ -117,6 +117,10 @@ func (a *App) OpenRecentFile(path string) (string, error) {
 	return a.fileManager.OpenFile(path)
 }
 
+func (a *App) ReadFileByPath(path string) (string, error) {
+	return a.fileManager.OpenFile(path)
+}
+
 func (a *App) ClearRecentFiles() {
 	a.fileManager.ClearRecentFiles()
 }

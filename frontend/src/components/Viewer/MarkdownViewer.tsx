@@ -1,13 +1,39 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
+import rehypeKatex from 'rehype-katex';
 import { CodeBlock } from './CodeBlock';
 import { useSettings } from '../../hooks/useSettings';
+import { Link } from 'lucide-react';
 import type { HeadingItem } from '../../types';
+import 'katex/dist/katex.min.css';
 
 interface MarkdownViewerProps {
   content: string;
   headings: HeadingItem[];
+}
+
+interface HeadingProps {
+  id?: string;
+  children: React.ReactNode;
+}
+
+function HeadingWithAnchor({ id, children, Tag }: HeadingProps & { Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' }) {
+  return (
+    <Tag id={id} className="group relative">
+      {children}
+      {id && (
+        <a
+          href={`#${id}`}
+          className="heading-anchor"
+          aria-label="Link to this heading"
+        >
+          <Link className="w-4 h-4" />
+        </a>
+      )}
+    </Tag>
+  );
 }
 
 export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
@@ -24,12 +50,12 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
       }}
     >
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
-          code({ className, children, ...props }) {
+          code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || '');
-            const isInline = !match && !className;
+            const isInline = !className;
             
             if (isInline) {
               return (
@@ -39,35 +65,41 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
               );
             }
 
+            const codeString = Array.isArray(children) 
+              ? children.join('') 
+              : typeof children === 'string' 
+                ? children 
+                : String(children);
+
             return (
               <CodeBlock language={match?.[1]}>
-                {String(children).replace(/\n$/, '')}
+                {codeString.replace(/\n$/, '')}
               </CodeBlock>
             );
           },
           h1({ children }) {
             const heading = headings[headingIndex++];
-            return <h1 id={heading?.id}>{children}</h1>;
+            return <HeadingWithAnchor Tag="h1" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           h2({ children }) {
             const heading = headings[headingIndex++];
-            return <h2 id={heading?.id}>{children}</h2>;
+            return <HeadingWithAnchor Tag="h2" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           h3({ children }) {
             const heading = headings[headingIndex++];
-            return <h3 id={heading?.id}>{children}</h3>;
+            return <HeadingWithAnchor Tag="h3" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           h4({ children }) {
             const heading = headings[headingIndex++];
-            return <h4 id={heading?.id}>{children}</h4>;
+            return <HeadingWithAnchor Tag="h4" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           h5({ children }) {
             const heading = headings[headingIndex++];
-            return <h5 id={heading?.id}>{children}</h5>;
+            return <HeadingWithAnchor Tag="h5" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           h6({ children }) {
             const heading = headings[headingIndex++];
-            return <h6 id={heading?.id}>{children}</h6>;
+            return <HeadingWithAnchor Tag="h6" id={heading?.id}>{children}</HeadingWithAnchor>;
           },
           a({ href, children }) {
             return (
@@ -78,7 +110,7 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
           },
           table({ children }) {
             return (
-              <div className="overflow-x-auto rounded border border-zinc-800">
+              <div className="table-wrapper">
                 <table>{children}</table>
               </div>
             );

@@ -7,6 +7,7 @@ export interface Settings {
   showLineNumbers: boolean;
   autoSave: boolean;
   wordWrap: boolean;
+  autoReload: boolean;
 }
 
 export interface HeadingItem {
