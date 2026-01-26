@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Titlebar } from './components/Titlebar/Titlebar';
-import { TabBar } from './components/TabBar/TabBar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
 import { StatusBar } from './components/StatusBar/StatusBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
@@ -208,6 +207,10 @@ export default function App() {
 
       <Titlebar
         hasOpenFiles={hasOpenFiles}
+        tabs={tabs}
+        activeTabId={activeTabId}
+        onTabClick={setActiveTabId}
+        onTabClose={closeTab}
         onNew={handleNew}
         onOpen={handleOpen}
         onSave={handleSave}
@@ -220,15 +223,6 @@ export default function App() {
         sidebarOpen={sidebarOpen}
         isFullscreen={isFullscreen}
       />
-
-      {hasOpenFiles && (
-        <TabBar
-          tabs={tabs}
-          activeTabId={activeTabId}
-          onTabClick={setActiveTabId}
-          onTabClose={closeTab}
-        />
-      )}
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar

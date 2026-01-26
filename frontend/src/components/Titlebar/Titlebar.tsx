@@ -23,6 +23,10 @@ import { useSettings } from '../../hooks/useSettings';
 
 interface TitlebarProps {
   hasOpenFiles: boolean;
+  tabs: Array<{ id: string; fileName: string; isModified: boolean }>;
+  activeTabId: string;
+  onTabClick: (tabId: string) => void;
+  onTabClose: (tabId: string) => void;
   onNew: () => void;
   onOpen: () => void;
   onSave: () => void;
@@ -38,6 +42,10 @@ interface TitlebarProps {
 
 export function Titlebar({
   hasOpenFiles,
+  tabs,
+  activeTabId,
+  onTabClick,
+  onTabClose,
   onNew,
   onOpen,
   onSave,
@@ -137,16 +145,47 @@ export function Titlebar({
         </div>
       </div>
 
-      {!hasOpenFiles && (
-        <div className="flex-1 flex items-center justify-center min-w-0">
+      <div className="flex-1 flex items-center justify-center min-w-0 px-4">
+        {!hasOpenFiles ? (
           <div className="flex items-center gap-2 select-none wails-no-drag">
             <div className="w-5 h-5 rounded bg-gradient-to-br from-cyan-400 to-blue-500" />
             <span className="text-sm font-semibold text-zinc-300 titlebar-text">MarkView Pro</span>
           </div>
-        </div>
-      )}
-
-      {hasOpenFiles && <div className="flex-1" />}
+        ) : (
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar wails-no-drag max-w-full">
+            {tabs.map(tab => (
+              <div
+                key={tab.id}
+                onClick={() => onTabClick(tab.id)}
+                className={`
+                  flex items-center gap-2 px-3 py-1 min-w-[100px] max-w-[180px] cursor-pointer rounded
+                  transition-colors group
+                  ${tab.id === activeTabId 
+                    ? 'bg-zinc-800 text-zinc-100' 
+                    : 'bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                  }
+                `}
+              >
+                <span className="flex-1 truncate text-xs">
+                  {tab.fileName || 'Untitled'}
+                </span>
+                {tab.isModified && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                )}
+                {tabs.length > 1 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onTabClose(tab.id); }}
+                    className="flex-shrink-0 p-0.5 rounded hover:bg-zinc-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Close tab"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center gap-0.5 wails-no-drag">
         <button onClick={onPrint} className="titlebar-btn" title="Print (Ctrl+P)">
