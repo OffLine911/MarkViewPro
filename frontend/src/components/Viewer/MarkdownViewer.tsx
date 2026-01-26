@@ -65,11 +65,21 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
               );
             }
 
-            const codeString = Array.isArray(children) 
-              ? children.join('') 
-              : typeof children === 'string' 
-                ? children 
-                : String(children);
+            // Convert children to string properly
+            let codeString = '';
+            if (Array.isArray(children)) {
+              codeString = children.map(child => {
+                if (typeof child === 'string') return child;
+                if (child && typeof child === 'object' && 'props' in child && child.props?.children) {
+                  return String(child.props.children);
+                }
+                return '';
+              }).join('');
+            } else if (typeof children === 'string') {
+              codeString = children;
+            } else {
+              codeString = String(children);
+            }
 
             return (
               <CodeBlock language={match?.[1]}>

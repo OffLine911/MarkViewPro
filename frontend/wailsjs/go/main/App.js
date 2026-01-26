@@ -6,6 +6,10 @@ export function ClearRecentFiles() {
   return window['go']['main']['App']['ClearRecentFiles']();
 }
 
+export function ExportContentToPDF(arg1) {
+  return window['go']['main']['App']['ExportContentToPDF'](arg1);
+}
+
 export function ExportToHTML(arg1, arg2) {
   return window['go']['main']['App']['ExportToHTML'](arg1, arg2);
 }

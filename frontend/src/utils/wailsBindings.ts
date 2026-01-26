@@ -5,7 +5,9 @@ declare global {
         App?: {
           OpenFile: () => Promise<{ content: string; path: string; name: string }>;
           SaveFile: (path: string, content: string) => Promise<void>;
+          SaveFileAs: (content: string) => Promise<string>;
           ExportToPDF: (path: string) => Promise<void>;
+          ExportContentToPDF: (content: string) => Promise<void>;
           ExportToHTML: (content: string, path: string) => Promise<void>;
           GetRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: string }>>;
           OpenFileDialog: () => Promise<string>;
@@ -57,6 +59,19 @@ export const wails = {
     }
   },
 
+  async saveFileAs(content: string): Promise<string | null> {
+    try {
+      if (window.go?.main?.App?.SaveFileAs) {
+        const path = await window.go.main.App.SaveFileAs(content);
+        return path || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to save file as:', error);
+      return null;
+    }
+  },
+
   async exportToPDF(path: string): Promise<boolean> {
     try {
       if (window.go?.main?.App?.ExportToPDF) {
@@ -66,6 +81,19 @@ export const wails = {
       return false;
     } catch (error) {
       console.error('Failed to export to PDF:', error);
+      return false;
+    }
+  },
+
+  async exportContentToPDF(content: string): Promise<boolean> {
+    try {
+      if (window.go?.main?.App?.ExportContentToPDF) {
+        await window.go.main.App.ExportContentToPDF(content);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to export content to PDF:', error);
       return false;
     }
   },

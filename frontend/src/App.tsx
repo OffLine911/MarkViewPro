@@ -75,8 +75,11 @@ export default function App() {
   const handleExportPDF = useCallback(async () => {
     if (filePath) {
       await wails.exportToPDF(filePath);
+    } else {
+      // Export current content directly
+      await wails.exportContentToPDF(content);
     }
-  }, [filePath]);
+  }, [filePath, content]);
 
   const handleExportHTML = useCallback(async () => {
     const path = await wails.saveFileDialog(fileName || 'document.html');

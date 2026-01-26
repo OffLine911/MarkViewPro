@@ -5,6 +5,20 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2026-01-26
+
+### Fixed
+- **Code Block Rendering**: Fixed code blocks showing `[object Object]` - now properly extracts text from React elements
+- **Save Functionality**: Save now works correctly - uses Save As dialog when no file path exists
+- **Export PDF**: PDF export now works for both saved and unsaved files using ExportContentToPDF
+- **Export HTML**: HTML export properly handles content for all file states
+
+### Technical
+- Improved code block text extraction to handle React element children
+- Added SaveFileAs binding to frontend
+- Added ExportContentToPDF method for exporting unsaved content
+- Enhanced save logic to automatically prompt for file location when needed
+
 ## [1.1.5] - 2026-01-26
 
 ### Fixed
@@ -74,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.1.6]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.6
 [1.1.5]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.5
 [1.1.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.0
 [1.0.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.0.0

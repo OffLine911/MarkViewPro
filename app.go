@@ -192,15 +192,43 @@ func (a *App) ExportToHTML(content, outputPath string) error {
 }
 
 func (a *App) ExportToPDF(filePath string) error {
-	if filePath == "" {
+	var content string
+	var err error
+
+	if filePath != "" {
+		// If filePath is provided, read from file
+		content, err = a.fileManager.OpenFile(filePath)
+		if err != nil {
+			return err
+		}
+	} else {
 		return nil
 	}
 
-	content, err := a.fileManager.OpenFile(filePath)
+	html, err := a.renderer.Render(content)
 	if err != nil {
 		return err
 	}
 
+	// Show save dialog for PDF
+	outputPath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:           "Export to PDF",
+		DefaultFilename: "export.pdf",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "PDF Files", Pattern: "*.pdf"},
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if outputPath == "" {
+		return nil
+	}
+
+	return a.exporter.ToPDF(html, outputPath)
+}
+
+func (a *App) ExportContentToPDF(content string) error {
 	html, err := a.renderer.Render(content)
 	if err != nil {
 		return err

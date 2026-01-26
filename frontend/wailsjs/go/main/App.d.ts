@@ -6,6 +6,8 @@ import {markdown} from '../models';
 
 export function ClearRecentFiles():Promise<void>;
 
+export function ExportContentToPDF(arg1:string):Promise<void>;
+
 export function ExportToHTML(arg1:string,arg2:string):Promise<void>;
 
 export function ExportToPDF(arg1:string):Promise<void>;

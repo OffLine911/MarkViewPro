@@ -135,7 +135,22 @@ export function useMarkdown() {
   }, []);
 
   const saveFile = useCallback(async () => {
-    if (!state.filePath) return false;
+    if (!state.filePath) {
+      // If no file path, use Save As
+      const result = await wails.saveFileAs(state.content);
+      if (result) {
+        // Update the file path after saving
+        setState(prev => ({
+          ...prev,
+          filePath: result,
+          fileName: result.split(/[/\\]/).pop() || 'Untitled',
+          isModified: false,
+        }));
+        return true;
+      }
+      return false;
+    }
+    
     const success = await wails.saveFile(state.filePath, state.content);
     if (success) {
       setState(prev => ({ ...prev, isModified: false }));
