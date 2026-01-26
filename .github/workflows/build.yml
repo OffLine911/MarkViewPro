@@ -91,7 +91,7 @@ jobs:
         run: |
           mkdir -p release
           cp artifacts/MarkViewPro-windows/MarkViewPro.exe release/MarkViewPro-windows-amd64.exe
-          zip -j release/MarkViewPro-macos-amd64.zip artifacts/MarkViewPro-macos/MarkViewPro.app
+          cd artifacts/MarkViewPro-macos && zip -r ../../release/MarkViewPro-macos-amd64.zip MarkViewPro.app && cd ../..
           cp artifacts/MarkViewPro-linux/MarkViewPro release/MarkViewPro-linux-amd64
           chmod +x release/MarkViewPro-linux-amd64
 
