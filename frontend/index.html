@@ -4,9 +4,69 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MarkView Pro</title>
+    <style>
+      #loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #0c0c10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+      #loading-screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .loader-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f4f4f5;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .loader-title span {
+        color: #06b6d4;
+      }
+      .loader-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #27272a;
+        border-top-color: #06b6d4;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body class="bg-white dark:bg-gray-900">
+    <div id="loading-screen">
+      <div class="loader">
+        <div class="loader-title">MarkView<span>Pro</span></div>
+        <div class="loader-spinner"></div>
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Hide loading screen once React is ready
+      window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const loader = document.getElementById('loading-screen');
+          if (loader) {
+            loader.classList.add('hidden');
+            setTimeout(() => loader.remove(), 300);
+          }
+        }, 100);
+      });
+    </script>
   </body>
 </html>

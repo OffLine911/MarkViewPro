@@ -31,17 +31,23 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 12, G: 12, B: 16, A: 1},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
-		OnDomReady:       app.domReady,
 		Bind: []interface{}{
 			app,
 		},
 		Windows: &windows.Options{
-			WebviewIsTransparent: false,
-			WindowIsTranslucent:  false,
-			DisableWindowIcon:    false,
+			WebviewIsTransparent:              false,
+			WindowIsTranslucent:               false,
+			DisableWindowIcon:                 false,
+			WebviewUserDataPath:               "",
+			WebviewBrowserPath:                "",
+			Theme:                             windows.Dark,
+			DisableFramelessWindowDecorations: false,
 		},
-		EnableDefaultContextMenu: false,
+		EnableDefaultContextMenu:         false,
 		EnableFraudulentWebsiteDetection: false,
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop: true,
+		},
 	})
 
 	if err != nil {
