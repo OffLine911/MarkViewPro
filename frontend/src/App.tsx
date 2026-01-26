@@ -23,7 +23,7 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [recentFiles] = useState<RecentFile[]>([]);
+  const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [isDragging, setIsDragging] = useState(false);
@@ -108,6 +108,21 @@ export default function App() {
     };
     loadInitialFile();
   }, [addTab]);
+
+  // Load recent files on mount
+  useEffect(() => {
+    const loadRecentFiles = async () => {
+      const files = await wails.getRecentFiles();
+      setRecentFiles(files);
+    };
+    loadRecentFiles();
+  }, []);
+
+  // Update recent files when a file is opened
+  const updateRecentFiles = useCallback(async () => {
+    const files = await wails.getRecentFiles();
+    setRecentFiles(files);
+  }, []);
 
   // Handle image paste
   useEffect(() => {
@@ -218,8 +233,17 @@ export default function App() {
     const result = await openFile();
     if (result) {
       addTab(result.name, result.path, result.content);
+      updateRecentFiles();
     }
-  }, [openFile, addTab]);
+  }, [openFile, addTab, updateRecentFiles]);
+
+  const handleOpenRecentFile = useCallback(async (path: string) => {
+    const result = await wails.readFileByPath(path);
+    if (result) {
+      addTab(result.name, result.path, result.content);
+      updateRecentFiles();
+    }
+  }, [addTab, updateRecentFiles]);
 
   const handleOpenFolder = useCallback(async () => {
     const tree = await wails.openFolder();
@@ -539,6 +563,7 @@ export default function App() {
           folderTree={folderTree}
           onFileClick={handleFileTreeClick}
           currentFilePath={activeTab?.filePath || filePath}
+          onOpenRecentFile={handleOpenRecentFile}
         />
 
         <main className="flex-1 overflow-hidden relative">

@@ -9,6 +9,7 @@ import { useSettings } from '../../hooks/useSettings';
 import { Link } from 'lucide-react';
 import type { HeadingItem } from '../../types';
 import 'katex/dist/katex.min.css';
+import { useState, useCallback, useEffect } from 'react';
 
 interface MarkdownViewerProps {
   content: string;
@@ -18,6 +19,65 @@ interface MarkdownViewerProps {
 interface HeadingProps {
   id?: string;
   children: React.ReactNode;
+}
+
+interface ContextMenuProps {
+  x: number;
+  y: number;
+  onClose: () => void;
+}
+
+function ContextMenu({ x, y, onClose }: ContextMenuProps) {
+  useEffect(() => {
+    const handleClick = () => onClose();
+    const handleScroll = () => onClose();
+    
+    document.addEventListener('click', handleClick);
+    document.addEventListener('scroll', handleScroll, true);
+    
+    return () => {
+      document.removeEventListener('click', handleClick);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
+  }, [onClose]);
+
+  const handleCopy = () => {
+    document.execCommand('copy');
+    onClose();
+  };
+
+  const handleSelectAll = () => {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const content = document.querySelector('.markdown-body');
+    if (content && selection) {
+      range.selectNodeContents(content);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed z-50 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl py-1 min-w-[160px]"
+      style={{ left: x, top: y }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={handleCopy}
+        className="w-full px-4 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+      >
+        Copy
+      </button>
+      <button
+        onClick={handleSelectAll}
+        className="w-full px-4 py-2 text-left text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+      >
+        Select All
+      </button>
+    </div>
+  );
 }
 
 function HeadingWithAnchor({ id, children, Tag }: HeadingProps & { Tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' }) {
@@ -39,17 +99,25 @@ function HeadingWithAnchor({ id, children, Tag }: HeadingProps & { Tag: 'h1' | '
 
 export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
   const { settings } = useSettings();
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   let headingIndex = 0;
 
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY });
+  }, []);
+
   return (
-    <div
-      className="markdown-body px-8 py-6 max-w-3xl mx-auto"
-      style={{
-        ['--md-font-size' as string]: `${settings.fontSize}px`,
-        ['--md-line-height' as string]: settings.lineHeight,
-        fontFamily: settings.fontFamily,
-      }}
-    >
+    <>
+      <div
+        className="markdown-body px-8 py-6 max-w-3xl mx-auto"
+        onContextMenu={handleContextMenu}
+        style={{
+          ['--md-font-size' as string]: `${settings.fontSize}px`,
+          ['--md-line-height' as string]: settings.lineHeight,
+          fontFamily: settings.fontFamily,
+        }}
+      >
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
@@ -135,6 +203,14 @@ export function MarkdownViewer({ content, headings }: MarkdownViewerProps) {
       >
         {content}
       </ReactMarkdown>
-    </div>
+      </div>
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+    </>
   );
 }

@@ -9,7 +9,7 @@ declare global {
           ExportToPDF: (path: string) => Promise<void>;
           ExportContentToPDF: (content: string) => Promise<void>;
           ExportToHTML: (content: string) => Promise<void>;
-          GetRecentFiles: () => Promise<Array<{ path: string; name: string; lastOpened: string }>>;
+          GetRecentFiles: () => Promise<Array<{ path: string; name: string; accessedAt: string }>>;
           OpenFileDialog: () => Promise<string>;
           SaveFileDialog: (defaultName: string) => Promise<string>;
           ReadFileByPath: (path: string) => Promise<{ content: string; path: string; name: string }>;
@@ -128,9 +128,10 @@ export const wails = {
     try {
       if (window.go?.main?.App?.GetRecentFiles) {
         const files = await window.go.main.App.GetRecentFiles();
-        return files.map(f => ({
-          ...f,
-          lastOpened: new Date(f.lastOpened),
+        return files.map((f: any) => ({
+          path: f.path,
+          name: f.name,
+          lastOpened: new Date(f.accessedAt || f.lastOpened),
         }));
       }
       return [];

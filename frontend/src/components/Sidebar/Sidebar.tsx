@@ -26,11 +26,19 @@ export function Sidebar({
   currentFilePath,
   onOpenRecentFile 
 }: SidebarProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('toc');
+  const [activeTab, setActiveTab] = useState<TabType>('files');
 
   // Auto-switch to files tab when folder is opened
   if (folderTree.length > 0 && activeTab !== 'files') {
     setActiveTab('files');
+  }
+
+  // Check if we have any content to show
+  const hasContent = headings.length > 0 || folderTree.length > 0 || recentFiles.length > 0;
+
+  // If no content, don't render sidebar
+  if (!hasContent) {
+    return null;
   }
 
   return (
@@ -42,15 +50,17 @@ export function Sidebar({
     >
       <div className="w-56 h-full flex flex-col sidebar">
         <div className="flex border-b sidebar-border">
-          <button
-            onClick={() => setActiveTab('toc')}
-            className={`sidebar-tab ${activeTab === 'toc' ? 'sidebar-tab-active' : 'sidebar-tab-inactive'}`}
-          >
-            <span className="flex items-center justify-center gap-1.5">
-              <List className="w-3.5 h-3.5" />
-              TOC
-            </span>
-          </button>
+          {headings.length > 0 && (
+            <button
+              onClick={() => setActiveTab('toc')}
+              className={`sidebar-tab ${activeTab === 'toc' ? 'sidebar-tab-active' : 'sidebar-tab-inactive'}`}
+            >
+              <span className="flex items-center justify-center gap-1.5">
+                <List className="w-3.5 h-3.5" />
+                TOC
+              </span>
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('files')}
             className={`sidebar-tab ${activeTab === 'files' ? 'sidebar-tab-active' : 'sidebar-tab-inactive'}`}
