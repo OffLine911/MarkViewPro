@@ -20,6 +20,10 @@ declare global {
           SavePastedImage: (base64Data: string, documentPath: string) => Promise<string>;
           CopyImageToAssets: (sourcePath: string, documentPath: string) => Promise<string>;
           GetInitialFile: () => Promise<string>;
+          GetSettings: () => Promise<BackendSettings>;
+          UpdateSettings: (settings: BackendSettings) => Promise<void>;
+          StartWatching: (path: string) => Promise<void>;
+          StopWatching: () => Promise<void>;
         };
       };
     };
@@ -35,6 +39,21 @@ declare global {
       Quit: () => void;
     };
   }
+}
+
+export interface BackendSettings {
+  theme: string;
+  fontSize: number;
+  fontFamily: string;
+  lineHeight: number;
+  editorTheme: string;
+  previewTheme: string;
+  autoSave: boolean;
+  autoSaveDelay: number;
+  syncScroll: boolean;
+  showLineNumbers: boolean;
+  wordWrap: boolean;
+  spellCheck: boolean;
 }
 
 export interface FileNode {
@@ -283,6 +302,54 @@ export const wails = {
     } catch (error) {
       console.error('Failed to get initial file:', error);
       return null;
+    }
+  },
+
+  async getSettings(): Promise<BackendSettings | null> {
+    try {
+      if (window.go?.main?.App?.GetSettings) {
+        return await window.go.main.App.GetSettings();
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to get settings:', error);
+      return null;
+    }
+  },
+
+  async updateSettings(settings: BackendSettings): Promise<boolean> {
+    try {
+      if (window.go?.main?.App?.UpdateSettings) {
+        await window.go.main.App.UpdateSettings(settings);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update settings:', error);
+      return false;
+    }
+  },
+
+  async startWatching(path: string): Promise<boolean> {
+    try {
+      if (window.go?.main?.App?.StartWatching) {
+        await window.go.main.App.StartWatching(path);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to start watching:', error);
+      return false;
+    }
+  },
+
+  stopWatching(): void {
+    try {
+      if (window.go?.main?.App?.StopWatching) {
+        window.go.main.App.StopWatching();
+      }
+    } catch (error) {
+      console.error('Failed to stop watching:', error);
     }
   },
 };

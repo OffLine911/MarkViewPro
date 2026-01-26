@@ -6,8 +6,13 @@ export interface Settings {
   sidebarWidth: number;
   showLineNumbers: boolean;
   autoSave: boolean;
+  autoSaveDelay: number;
   wordWrap: boolean;
   autoReload: boolean;
+  editorTheme: string;
+  previewTheme: string;
+  syncScroll: boolean;
+  spellCheck: boolean;
 }
 
 export interface HeadingItem {

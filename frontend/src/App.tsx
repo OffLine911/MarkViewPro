@@ -7,9 +7,11 @@ import { SettingsModal } from './components/Settings/SettingsModal';
 import { SearchBar } from './components/Search/SearchBar';
 import { ViewModeToggle, ViewMode } from './components/Toolbar/ViewModeToggle';
 import { WelcomeScreen } from './components/Welcome/WelcomeScreen';
+import { ToastContainer } from './components/Toast/Toast';
 import { useMarkdown } from './hooks/useMarkdown';
 import { useTabs } from './hooks/useTabs';
 import { useAppKeyboard } from './hooks/useKeyboard';
+import { useToast } from './hooks/useToast';
 import { wails, FileNode } from './utils/wailsBindings';
 import type { RecentFile } from './types';
 
@@ -31,6 +33,7 @@ export default function App() {
   const [folderTree, setFolderTree] = useState<FileNode[]>([]);
 
   const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab, updateTab, updateTabContent } = useTabs();
+  const { toasts, dismissToast, success, error, info } = useToast();
 
   const {
     content,
@@ -238,12 +241,20 @@ export default function App() {
   }, [openFile, addTab, updateRecentFiles]);
 
   const handleOpenRecentFile = useCallback(async (path: string) => {
-    const result = await wails.readFileByPath(path);
-    if (result) {
-      addTab(result.name, result.path, result.content);
-      updateRecentFiles();
+    try {
+      const result = await wails.readFileByPath(path);
+      if (result) {
+        addTab(result.name, result.path, result.content);
+        updateRecentFiles();
+        info(`Opened ${result.name}`);
+      } else {
+        error('Failed to open file');
+      }
+    } catch (err) {
+      error('Error opening file');
+      console.error('Open error:', err);
     }
-  }, [addTab, updateRecentFiles]);
+  }, [addTab, updateRecentFiles, info, error]);
 
   const handleOpenFolder = useCallback(async () => {
     const tree = await wails.openFolder();
@@ -274,31 +285,53 @@ export default function App() {
   const handleSave = useCallback(async () => {
     if (!activeTab) return;
     
-    if (activeTab.filePath) {
-      const success = await wails.saveFile(activeTab.filePath, activeTab.content);
-      if (success) {
-        updateTab(activeTab.id, { isModified: false });
+    try {
+      if (activeTab.filePath) {
+        const saveSuccess = await wails.saveFile(activeTab.filePath, activeTab.content);
+        if (saveSuccess) {
+          updateTab(activeTab.id, { isModified: false });
+          success('File saved successfully');
+        } else {
+          error('Failed to save file');
+        }
+      } else {
+        const newPath = await wails.saveFileAs(activeTab.content);
+        if (newPath) {
+          const fileName = newPath.split(/[/\\]/).pop() || 'Untitled';
+          updateTab(activeTab.id, { filePath: newPath, fileName, isModified: false });
+          success('File saved successfully');
+        }
       }
-    } else {
-      const newPath = await wails.saveFileAs(activeTab.content);
-      if (newPath) {
-        const fileName = newPath.split(/[/\\]/).pop() || 'Untitled';
-        updateTab(activeTab.id, { filePath: newPath, fileName, isModified: false });
-      }
+    } catch (err) {
+      error('Error saving file');
+      console.error('Save error:', err);
     }
-  }, [activeTab, updateTab]);
+  }, [activeTab, updateTab, success, error]);
 
   const handleExportPDF = useCallback(async () => {
-    if (filePath) {
-      await wails.exportToPDF(filePath);
-    } else {
-      await wails.exportContentToPDF(content);
+    try {
+      if (filePath) {
+        await wails.exportToPDF(filePath);
+        success('PDF exported successfully');
+      } else {
+        await wails.exportContentToPDF(content);
+        success('PDF exported successfully');
+      }
+    } catch (err) {
+      error('Failed to export PDF');
+      console.error('Export error:', err);
     }
-  }, [filePath, content]);
+  }, [filePath, content, success, error]);
 
   const handleExportHTML = useCallback(async () => {
-    await wails.exportToHTML(content);
-  }, [content]);
+    try {
+      await wails.exportToHTML(content);
+      success('HTML exported successfully');
+    } catch (err) {
+      error('Failed to export HTML');
+      console.error('Export error:', err);
+    }
+  }, [content, success, error]);
 
   const handleToggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev);
@@ -649,6 +682,7 @@ export default function App() {
           />
         </Suspense>
       )}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

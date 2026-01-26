@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Settings } from '../types';
+import { wails, type BackendSettings } from '../utils/wailsBindings';
 
 const defaultSettings: Settings = {
   theme: 'system',
@@ -9,8 +10,13 @@ const defaultSettings: Settings = {
   sidebarWidth: 280,
   showLineNumbers: true,
   autoSave: false,
+  autoSaveDelay: 3000,
   wordWrap: true,
   autoReload: true,
+  editorTheme: 'default',
+  previewTheme: 'github',
+  syncScroll: true,
+  spellCheck: false,
 };
 
 interface SettingsContextType {
@@ -24,24 +30,80 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 const STORAGE_KEY = 'markview-pro-settings';
 
+function backendToFrontend(backend: BackendSettings): Settings {
+  return {
+    theme: (backend.theme as 'light' | 'dark' | 'system') || 'system',
+    fontSize: backend.fontSize || 16,
+    fontFamily: backend.fontFamily || 'Inter',
+    lineHeight: backend.lineHeight || 1.6,
+    sidebarWidth: 280, // Not in backend
+    showLineNumbers: backend.showLineNumbers ?? true,
+    autoSave: backend.autoSave ?? false,
+    autoSaveDelay: backend.autoSaveDelay || 3000,
+    wordWrap: backend.wordWrap ?? true,
+    autoReload: true, // Not in backend
+    editorTheme: backend.editorTheme || 'default',
+    previewTheme: backend.previewTheme || 'github',
+    syncScroll: backend.syncScroll ?? true,
+    spellCheck: backend.spellCheck ?? false,
+  };
+}
+
+function frontendToBackend(frontend: Settings): BackendSettings {
+  return {
+    theme: frontend.theme,
+    fontSize: frontend.fontSize,
+    fontFamily: frontend.fontFamily,
+    lineHeight: frontend.lineHeight,
+    showLineNumbers: frontend.showLineNumbers,
+    autoSave: frontend.autoSave,
+    autoSaveDelay: frontend.autoSaveDelay,
+    wordWrap: frontend.wordWrap,
+    editorTheme: frontend.editorTheme,
+    previewTheme: frontend.previewTheme,
+    syncScroll: frontend.syncScroll,
+    spellCheck: frontend.spellCheck,
+  };
+}
+
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return { ...defaultSettings, ...JSON.parse(stored) };
-      }
-    } catch {
-      console.error('Failed to load settings from storage');
-    }
-    return defaultSettings;
-  });
-
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [isDark, setIsDark] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Load settings from backend on mount
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-  }, [settings]);
+    const loadSettings = async () => {
+      const backendSettings = await wails.getSettings();
+      if (backendSettings) {
+        setSettings(backendToFrontend(backendSettings));
+      } else {
+        // Fallback to localStorage if backend fails
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            setSettings({ ...defaultSettings, ...JSON.parse(stored) });
+          }
+        } catch {
+          console.error('Failed to load settings from storage');
+        }
+      }
+      setIsLoaded(true);
+    };
+    loadSettings();
+  }, []);
+
+  // Save to backend when settings change
+  useEffect(() => {
+    if (!isLoaded) return;
+    
+    const saveSettings = async () => {
+      await wails.updateSettings(frontendToBackend(settings));
+      // Also save to localStorage as backup
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    };
+    saveSettings();
+  }, [settings, isLoaded]);
 
   useEffect(() => {
     const updateTheme = () => {
