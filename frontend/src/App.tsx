@@ -30,7 +30,7 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [folderTree, setFolderTree] = useState<FileNode[]>([]);
 
-  const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab, updateTabContent } = useTabs();
+  const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab, updateTab, updateTabContent } = useTabs();
 
   const {
     content,
@@ -42,8 +42,8 @@ export default function App() {
     updateContent,
   } = useMarkdown();
 
-  // Extract headings from active tab content
-  const activeContent = activeTab?.content || content;
+  // Extract headings from active tab content (empty string if no tabs open)
+  const activeContent = activeTab?.content ?? '';
   const activeHeadings = useMemo(() => {
     const lines = activeContent.split('\n');
     const headings: Array<{ id: string; text: string; level: number }> = [];
@@ -249,10 +249,21 @@ export default function App() {
   const hasOpenFiles = tabs.length > 0;
 
   const handleSave = useCallback(async () => {
-    if (filePath) {
-      await saveFile();
+    if (!activeTab) return;
+    
+    if (activeTab.filePath) {
+      const success = await wails.saveFile(activeTab.filePath, activeTab.content);
+      if (success) {
+        updateTab(activeTab.id, { isModified: false });
+      }
+    } else {
+      const newPath = await wails.saveFileAs(activeTab.content);
+      if (newPath) {
+        const fileName = newPath.split(/[/\\]/).pop() || 'Untitled';
+        updateTab(activeTab.id, { filePath: newPath, fileName, isModified: false });
+      }
     }
-  }, [filePath, saveFile]);
+  }, [activeTab, updateTab]);
 
   const handleExportPDF = useCallback(async () => {
     if (filePath) {

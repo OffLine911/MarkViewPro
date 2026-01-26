@@ -5,6 +5,29 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-01-26
+
+### Added
+- **File Association Support**: MarkViewPro can now be set as the default app for `.md` and `.markdown` files
+  - Double-click markdown files to open them directly in MarkViewPro
+  - CLI argument handling for file paths
+  - NSIS installer script for Windows file association registration
+  - New `GetInitialFile()` backend method
+
+### Fixed
+- **Save Button**: Fixed save not working - now properly saves active tab content
+  - Uses active tab's file path and content instead of stale state
+  - Correctly handles "Save As" for new unsaved files
+  - Updates tab state (modified indicator, file name) after saving
+- **TOC Showing Old Data**: Fixed Table of Contents showing headings from previous welcome content
+  - TOC now correctly shows empty when no files are open
+  - Headings update properly when switching tabs
+
+### Changed
+- **New App Icon**: Modern, professional icon with glowing cyan "M" on dark background
+  - Matches the app's dark theme and branding
+  - Professional look suitable for macOS dock and Windows taskbar
+
 ## [1.3.0] - 2026-01-26
 
 ### 🎉 Major Features Added
@@ -324,6 +347,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.3.1]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.3.1
+[1.3.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.3.0
+[1.2.4]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.4
 [1.2.3]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.3
 [1.2.2]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.2
 [1.2.1]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.1
