@@ -1,13 +1,10 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Titlebar } from './components/Titlebar/Titlebar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
-import { MarkdownEditor } from './components/Editor/MarkdownEditor';
-import { SplitView } from './components/SplitView/SplitView';
 import { StatusBar } from './components/StatusBar/StatusBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { SearchBar } from './components/Search/SearchBar';
-import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { ViewModeToggle, ViewMode } from './components/Toolbar/ViewModeToggle';
 import { WelcomeScreen } from './components/Welcome/WelcomeScreen';
 import { useMarkdown } from './hooks/useMarkdown';
@@ -15,6 +12,11 @@ import { useTabs } from './hooks/useTabs';
 import { useAppKeyboard } from './hooks/useKeyboard';
 import { wails, FileNode } from './utils/wailsBindings';
 import type { RecentFile } from './types';
+
+// Lazy load heavy components
+const MarkdownEditor = lazy(() => import('./components/Editor/MarkdownEditor').then(m => ({ default: m.MarkdownEditor })));
+const SplitView = lazy(() => import('./components/SplitView/SplitView').then(m => ({ default: m.SplitView })));
+const CommandPalette = lazy(() => import('./components/CommandPalette/CommandPalette').then(m => ({ default: m.CommandPalette })));
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -545,22 +547,26 @@ export default function App() {
               )}
 
               {viewMode === 'editor' && (
-                <div className="h-full">
-                  <MarkdownEditor 
-                    content={activeContent} 
-                    onChange={handleContentChange}
-                    theme="dark"
-                  />
-                </div>
+                <Suspense fallback={<div className="flex items-center justify-center h-full text-zinc-400">Loading editor...</div>}>
+                  <div className="h-full">
+                    <MarkdownEditor 
+                      content={activeContent} 
+                      onChange={handleContentChange}
+                      theme="dark"
+                    />
+                  </div>
+                </Suspense>
               )}
 
               {viewMode === 'split' && (
-                <SplitView
-                  content={activeContent}
-                  onChange={handleContentChange}
-                  headings={activeHeadings}
-                  theme="dark"
-                />
+                <Suspense fallback={<div className="flex items-center justify-center h-full text-zinc-400">Loading split view...</div>}>
+                  <SplitView
+                    content={activeContent}
+                    onChange={handleContentChange}
+                    headings={activeHeadings}
+                    theme="dark"
+                  />
+                </Suspense>
               )}
             </>
           )}
@@ -585,11 +591,15 @@ export default function App() {
       )}
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <CommandPalette 
-        isOpen={commandPaletteOpen} 
-        onClose={() => setCommandPaletteOpen(false)}
-        commands={commands}
-      />
+      {commandPaletteOpen && (
+        <Suspense fallback={null}>
+          <CommandPalette 
+            isOpen={commandPaletteOpen} 
+            onClose={() => setCommandPaletteOpen(false)}
+            commands={commands}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

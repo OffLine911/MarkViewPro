@@ -1,28 +1,38 @@
 import { useEffect, useRef, useState } from 'react';
-import mermaid from 'mermaid';
 
 interface MermaidDiagramProps {
   chart: string;
 }
 
-// Initialize mermaid
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'dark',
-  securityLevel: 'loose',
-  fontFamily: 'ui-sans-serif, system-ui, sans-serif',
-});
-
 export function MermaidDiagram({ chart }: MermaidDiagramProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [mermaidLoaded, setMermaidLoaded] = useState(false);
 
   useEffect(() => {
+    // Lazy load mermaid only when needed
+    import('mermaid').then((mermaidModule) => {
+      const mermaid = mermaidModule.default;
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        securityLevel: 'loose',
+        fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+      });
+      setMermaidLoaded(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!mermaidLoaded) return;
+
     const renderDiagram = async () => {
       if (!ref.current || !chart) return;
 
       try {
+        const mermaidModule = await import('mermaid');
+        const mermaid = mermaidModule.default;
         setError('');
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
         const { svg } = await mermaid.render(id, chart);
@@ -34,7 +44,15 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
     };
 
     renderDiagram();
-  }, [chart]);
+  }, [chart, mermaidLoaded]);
+
+  if (!mermaidLoaded) {
+    return (
+      <div className="flex items-center justify-center p-8 bg-zinc-900/50 rounded-lg border border-zinc-800">
+        <span className="text-zinc-400 text-sm">Loading diagram...</span>
+      </div>
+    );
+  }
 
   if (error) {
     return (
