@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Titlebar } from './components/Titlebar/Titlebar';
+import { TabBar } from './components/TabBar/TabBar';
 import { MarkdownViewer } from './components/Viewer/MarkdownViewer';
 import { StatusBar } from './components/StatusBar/StatusBar';
 import { SettingsModal } from './components/Settings/SettingsModal';
 import { SearchBar } from './components/Search/SearchBar';
 import { useMarkdown } from './hooks/useMarkdown';
+import { useTabs } from './hooks/useTabs';
 import { useAppKeyboard } from './hooks/useKeyboard';
 import { wails } from './utils/wailsBindings';
 import type { RecentFile } from './types';
@@ -17,6 +19,21 @@ export default function App() {
   const [recentFiles] = useState<RecentFile[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(100);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab } = useTabs();
+
+  const {
+    content,
+    filePath,
+    fileName,
+    isModified,
+    headings,
+    stats,
+    openFile,
+    saveFile,
+    newFile,
+  } = useMarkdown();
 
   // Listen for fullscreen changes
   useEffect(() => {
@@ -28,64 +45,72 @@ export default function App() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Prevent default drag and drop behavior that opens files in browser
+  // Handle drag and drop
   useEffect(() => {
-    const preventDefaults = (e: DragEvent) => {
+    const handleDragOver = (e: DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      setIsDragging(true);
     };
 
-    // Prevent browser from opening dropped files
-    document.addEventListener('dragover', preventDefaults);
-    document.addEventListener('drop', preventDefaults);
-    document.addEventListener('dragenter', preventDefaults);
-    document.addEventListener('dragleave', preventDefaults);
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.clientX === 0 && e.clientY === 0) {
+        setIsDragging(false);
+      }
+    };
+
+    const handleDrop = async (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+              const content = event.target?.result as string;
+              if (content) {
+                addTab(file.name, null, content);
+              }
+            };
+            reader.readAsText(file);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('drop', handleDrop);
 
     return () => {
-      document.removeEventListener('dragover', preventDefaults);
-      document.removeEventListener('drop', preventDefaults);
-      document.removeEventListener('dragenter', preventDefaults);
-      document.removeEventListener('dragleave', preventDefaults);
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('drop', handleDrop);
     };
-  }, []);
+  }, [addTab]);
 
   // Apply zoom level
   useEffect(() => {
     document.documentElement.style.setProperty('--zoom-level', `${zoom}%`);
   }, [zoom]);
 
-  const {
-    content,
-    filePath,
-    fileName,
-    isModified,
-    headings,
-    stats,
-    openFile,
-    openFileByPath,
-    saveFile,
-    newFile,
-  } = useMarkdown();
-
-  // Listen for file drop events
-  useEffect(() => {
-    const handleFileDrop = (...args: unknown[]) => {
-      const filePath = args[0] as string;
-      if (filePath && (filePath.endsWith('.md') || filePath.endsWith('.markdown'))) {
-        openFileByPath(filePath);
-      }
-    };
-
-    wails.onEvent('file-dropped', handleFileDrop);
-
-    return () => {
-      wails.offEvent('file-dropped');
-    };
-  }, [openFileByPath]);
-
   const handleOpen = useCallback(async () => {
-    await openFile();
-  }, [openFile]);
+    const result = await openFile();
+    if (result) {
+      addTab(fileName || 'Untitled', filePath, content);
+    }
+  }, [openFile, addTab, fileName, filePath, content]);
+
+  const handleNew = useCallback(() => {
+    newFile();
+    addTab('New Document', null, '');
+  }, [newFile, addTab]);
 
   const handleSave = useCallback(async () => {
     if (filePath) {
@@ -97,7 +122,6 @@ export default function App() {
     if (filePath) {
       await wails.exportToPDF(filePath);
     } else {
-      // Export current content directly
       await wails.exportContentToPDF(content);
     }
   }, [filePath, content]);
@@ -145,7 +169,7 @@ export default function App() {
     onExport: handleExportPDF,
     onToggleSidebar: handleToggleSidebar,
     onToggleSettings: handleToggleSettings,
-    onNew: newFile,
+    onNew: handleNew,
     onPrint: handlePrint,
     onToggleFullscreen: handleToggleFullscreen,
     onToggleSearch: handleToggleSearch,
@@ -156,10 +180,20 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen">
+      {isDragging && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/90 backdrop-blur-sm pointer-events-none">
+          <div className="text-center">
+            <div className="text-6xl mb-4">📄</div>
+            <div className="text-2xl font-semibold text-zinc-100">Drop Markdown Files Here</div>
+            <div className="text-sm text-zinc-400 mt-2">Supports .md and .markdown files</div>
+          </div>
+        </div>
+      )}
+
       <Titlebar
         fileName={fileName}
         isModified={isModified}
-        onNew={newFile}
+        onNew={handleNew}
         onOpen={handleOpen}
         onSave={handleSave}
         onExportPDF={handleExportPDF}
@@ -172,6 +206,13 @@ export default function App() {
         isFullscreen={isFullscreen}
       />
 
+      <TabBar
+        tabs={tabs}
+        activeTabId={activeTabId}
+        onTabClick={setActiveTabId}
+        onTabClose={closeTab}
+      />
+
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
           isOpen={sidebarOpen}
@@ -181,19 +222,19 @@ export default function App() {
         />
 
         <main className="flex-1 overflow-y-auto main-content relative">
-          <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={content} />
-          <MarkdownViewer content={content} headings={headings} />
+          <SearchBar isOpen={searchOpen} onClose={() => setSearchOpen(false)} content={activeTab?.content || content} />
+          <MarkdownViewer content={activeTab?.content || content} headings={headings} />
         </main>
       </div>
 
       <StatusBar
-        filePath={filePath}
+        filePath={activeTab?.filePath || filePath}
         wordCount={stats.wordCount}
         characterCount={stats.characterCount}
         lineCount={stats.lineCount}
         readingTime={Math.ceil(stats.wordCount / 200)}
         zoom={zoom}
-        isModified={isModified}
+        isModified={activeTab?.isModified || isModified}
       />
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />

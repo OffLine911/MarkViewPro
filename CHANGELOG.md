@@ -5,6 +5,34 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-26
+
+### Added
+- **Tab Support**: Open multiple markdown files in tabs
+  - Click tabs to switch between files
+  - Close tabs with X button (keeps at least one tab open)
+  - Drag and drop multiple files to open in separate tabs
+  - Each tab maintains its own state (content, modified status, file path)
+  - Visual indicator for modified tabs
+- **Drag & Drop Visual Feedback**: Beautiful overlay when dragging files
+  - Shows "Drop Markdown Files Here" message
+  - Animated backdrop blur effect
+  - File icon and instructions
+
+### Fixed
+- **Drag & Drop**: Now works correctly - files open in tabs instead of browser window
+  - Properly prevents default browser behavior
+  - Supports dropping multiple files at once
+  - Only accepts .md and .markdown files
+  - Uses FileReader API for reliable file reading
+
+### Technical
+- Created `useTabs` hook for tab state management
+- Created `TabBar` component for tab UI
+- Implemented HTML5 drag and drop with proper event handling
+- Added drag state tracking for visual feedback
+- Tab system prevents duplicate file opens
+
 ## [1.1.7] - 2026-01-26
 
 ### Fixed
@@ -114,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.2.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.0
 [1.1.7]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.7
 [1.1.6]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.6
 [1.1.5]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.1.5
