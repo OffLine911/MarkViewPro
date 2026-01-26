@@ -525,7 +525,7 @@ export default function App() {
 
         <main className="flex-1 overflow-hidden relative">
           {/* View Mode Toggle */}
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-2 right-2 z-10">
             <ViewModeToggle mode={viewMode} onChange={setViewMode} />
           </div>
 
