@@ -85,7 +85,6 @@ export function useTabs() {
     addTab,
     closeTab,
     updateTab,
-    updateActiveTab,
     updateTabContent,
   };
 }

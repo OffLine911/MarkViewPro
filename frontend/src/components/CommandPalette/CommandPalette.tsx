@@ -106,10 +106,9 @@ export function CommandPalette({ isOpen, onClose, commands }: CommandPaletteProp
                 <div className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider bg-zinc-800/50">
                   {category}
                 </div>
-                {items.map((cmd, idx) => {
+                {items.map((cmd) => {
                   const globalIndex = filteredCommands.indexOf(cmd);
                   const isSelected = globalIndex === selectedIndex;
-                  
                   return (
                     <button
                       key={cmd.id}

@@ -26,7 +26,6 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [folderTree, setFolderTree] = useState<FileNode[]>([]);
-  const [currentFolder, setCurrentFolder] = useState<string | null>(null);
 
   const { tabs, activeTab, activeTabId, setActiveTabId, addTab, closeTab, updateTabContent } = useTabs();
 
@@ -38,7 +37,7 @@ export default function App() {
     openFile,
     saveFile,
     newFile,
-    setContent,
+    updateContent,
   } = useMarkdown();
 
   // Extract headings from active tab content
@@ -81,9 +80,9 @@ export default function App() {
     if (activeTab) {
       updateTabContent(activeTab.id, newContent);
     } else {
-      setContent(newContent);
+      updateContent(newContent);
     }
-  }, [activeTab, updateTabContent, setContent]);
+  }, [activeTab, updateTabContent, updateContent]);
 
   // Listen for fullscreen changes
   useEffect(() => {
@@ -219,7 +218,6 @@ export default function App() {
     const tree = await wails.openFolder();
     if (tree && tree.length > 0) {
       setFolderTree(tree);
-      setCurrentFolder(tree[0].path);
       setSidebarOpen(true);
     }
   }, []);
@@ -291,10 +289,6 @@ export default function App() {
 
   const handleZoomReset = useCallback(() => {
     setZoom(100);
-  }, []);
-
-  const handleToggleCommandPalette = useCallback(() => {
-    setCommandPaletteOpen(prev => !prev);
   }, []);
 
   // Command palette commands
