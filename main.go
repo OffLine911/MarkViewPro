@@ -59,14 +59,17 @@ func main() {
 
 				// Check if there's a file argument
 				args := secondInstanceData.Args
-				if len(args) > 1 {
-					arg := args[1]
+				for _, arg := range args {
 					ext := strings.ToLower(filepath.Ext(arg))
 					if ext == ".md" || ext == ".markdown" {
-						if absPath, err := filepath.Abs(arg); err == nil {
-							// Emit event to frontend to open file
-							runtime.EventsEmit(app.ctx, "open-file-from-instance", absPath)
+						// Use the path as-is if absolute, otherwise make it absolute using working dir
+						filePath := arg
+						if !filepath.IsAbs(arg) {
+							filePath = filepath.Join(secondInstanceData.WorkingDirectory, arg)
 						}
+						// Emit event to frontend to open file
+						runtime.EventsEmit(app.ctx, "open-file-from-instance", filePath)
+						break
 					}
 				}
 			},
