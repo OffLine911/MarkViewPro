@@ -158,15 +158,15 @@ export function Titlebar({
                 key={tab.id}
                 onClick={() => onTabClick(tab.id)}
                 className={`
-                  flex items-center gap-2 px-3 py-1 min-w-[100px] max-w-[180px] cursor-pointer rounded
-                  transition-colors group
+                  flex items-center gap-2 px-3 py-1.5 min-w-[100px] max-w-[180px] cursor-pointer rounded-t
+                  transition-all group relative
                   ${tab.id === activeTabId 
-                    ? 'bg-zinc-800 text-zinc-100' 
-                    : 'bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                    ? 'bg-zinc-800 text-zinc-100 border-t-2 border-t-cyan-500 border-x border-x-zinc-700' 
+                    : 'bg-zinc-900/30 text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300 border-t-2 border-t-transparent'
                   }
                 `}
               >
-                <span className="flex-1 truncate text-xs">
+                <span className={`flex-1 truncate text-xs font-medium ${tab.id === activeTabId ? '' : 'font-normal'}`}>
                   {tab.fileName || 'Untitled'}
                 </span>
                 {tab.isModified && (
