@@ -16,42 +16,56 @@ export function useTabs() {
   const activeTab = tabs.find(tab => tab.id === activeTabId);
 
   const addTab = useCallback((fileName: string, filePath: string | null, content: string) => {
-    // Check if file is already open
-    const existingTab = tabs.find(tab => tab.filePath === filePath && filePath !== null);
-    if (existingTab) {
-      setActiveTabId(existingTab.id);
-      return;
-    }
+    const newTabId = Date.now().toString();
+    
+    setTabs(prev => {
+      // Check if file is already open
+      if (filePath !== null) {
+        const existingTab = prev.find(tab => tab.filePath === filePath);
+        if (existingTab) {
+          // Schedule setActiveTabId after this state update
+          setTimeout(() => setActiveTabId(existingTab.id), 0);
+          return prev;
+        }
+      }
 
-    const newTab: Tab = {
-      id: Date.now().toString(),
-      fileName,
-      filePath,
-      content,
-      isModified: false,
-    };
+      const newTab: Tab = {
+        id: newTabId,
+        fileName,
+        filePath,
+        content,
+        isModified: false,
+      };
 
-    setTabs(prev => [...prev, newTab]);
-    setActiveTabId(newTab.id);
-  }, [tabs]);
+      // Schedule setActiveTabId after this state update
+      setTimeout(() => setActiveTabId(newTabId), 0);
+      return [...prev, newTab];
+    });
+  }, []);
 
   const closeTab = useCallback((tabId: string) => {
     setTabs(prev => {
       const newTabs = prev.filter(tab => tab.id !== tabId);
+      const closedIndex = prev.findIndex(tab => tab.id === tabId);
       
-      // If closing active tab, switch to another
-      if (tabId === activeTabId && newTabs.length > 0) {
-        const closedIndex = prev.findIndex(tab => tab.id === tabId);
-        const newActiveIndex = Math.min(closedIndex, newTabs.length - 1);
-        setActiveTabId(newTabs[newActiveIndex].id);
-      } else if (newTabs.length === 0) {
-        // No tabs left, set activeTabId to null to show welcome screen
-        setActiveTabId(null);
-      }
+      // Schedule active tab update after state change
+      setTimeout(() => {
+        setActiveTabId(currentActiveId => {
+          // If closing the active tab, switch to another
+          if (tabId === currentActiveId && newTabs.length > 0) {
+            const newActiveIndex = Math.min(closedIndex, newTabs.length - 1);
+            return newTabs[newActiveIndex].id;
+          } else if (newTabs.length === 0) {
+            // No tabs left, show welcome screen
+            return null;
+          }
+          return currentActiveId;
+        });
+      }, 0);
       
       return newTabs;
     });
-  }, [activeTabId]);
+  }, []);
 
   const updateTab = useCallback((tabId: string, updates: Partial<Tab>) => {
     setTabs(prev => prev.map(tab => 

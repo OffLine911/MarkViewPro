@@ -158,11 +158,11 @@ export function Titlebar({
                 key={tab.id}
                 onClick={() => onTabClick(tab.id)}
                 className={`
-                  flex items-center gap-2 px-3 py-1.5 min-w-[100px] max-w-[180px] cursor-pointer rounded-t
+                  flex items-center gap-2 px-3 py-1.5 min-w-[100px] max-w-[180px] cursor-pointer rounded
                   transition-all group relative
                   ${tab.id === activeTabId 
-                    ? 'bg-zinc-800 text-zinc-100 border-t-2 border-t-cyan-500 border-x border-x-zinc-700' 
-                    : 'bg-zinc-900/30 text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300 border-t-2 border-t-transparent'
+                    ? 'bg-zinc-700 text-zinc-100 shadow-[inset_0_2px_0_0_#06b6d4]' 
+                    : 'bg-zinc-900/30 text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300'
                   }
                 `}
               >
