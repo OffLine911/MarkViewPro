@@ -47,7 +47,9 @@ A modern, feature-rich Markdown viewer and editor built with Wails, Go, and Reac
 ## 📸 Screenshots
 
 <!-- Add screenshots here -->
-![MarkViewPro Screenshot](docs/screenshot.png)
+![MarkViewPro Screenshot](screenshots/Screenshot01.png
+![MarkViewPro Screenshot](screenshots/Screenshot02.png)
+![MarkViewPro Screenshot](screenshots/Screenshot03.png)
 
 ## 🚀 Quick Start
 
