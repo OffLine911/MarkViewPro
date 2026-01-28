@@ -21,6 +21,7 @@ type UserSettings struct {
 	ShowLineNumbers bool    `json:"showLineNumbers"`
 	WordWrap        bool    `json:"wordWrap"`
 	SpellCheck      bool    `json:"spellCheck"`
+	OpenInNewTab    bool    `json:"openInNewTab"`
 }
 
 type Settings struct {
@@ -49,6 +50,7 @@ func defaultSettings() UserSettings {
 		ShowLineNumbers: true,
 		WordWrap:        true,
 		SpellCheck:      false,
+		OpenInNewTab:    true,
 	}
 }
 

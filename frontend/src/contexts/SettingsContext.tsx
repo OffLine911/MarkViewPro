@@ -17,6 +17,7 @@ const defaultSettings: Settings = {
   previewTheme: 'github',
   syncScroll: true,
   spellCheck: false,
+  openInNewTab: true,
 };
 
 interface SettingsContextType {
@@ -46,6 +47,7 @@ function backendToFrontend(backend: BackendSettings): Settings {
     previewTheme: backend.previewTheme || 'github',
     syncScroll: backend.syncScroll ?? true,
     spellCheck: backend.spellCheck ?? false,
+    openInNewTab: backend.openInNewTab ?? true,
   };
 }
 
@@ -64,6 +66,7 @@ function frontendToBackend(frontend: Settings): BackendSettings {
     previewTheme: frontend.previewTheme,
     syncScroll: frontend.syncScroll,
     spellCheck: frontend.spellCheck,
+    openInNewTab: frontend.openInNewTab,
   };
 }
 

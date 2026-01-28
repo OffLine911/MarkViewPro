@@ -13,6 +13,7 @@ export interface Settings {
   previewTheme: string;
   syncScroll: boolean;
   spellCheck: boolean;
+  openInNewTab: boolean;
 }
 
 export interface HeadingItem {

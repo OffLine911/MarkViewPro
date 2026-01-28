@@ -154,6 +154,7 @@ export namespace settings {
 	    showLineNumbers: boolean;
 	    wordWrap: boolean;
 	    spellCheck: boolean;
+	    openInNewTab: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new UserSettings(source);
@@ -174,6 +175,7 @@ export namespace settings {
 	        this.showLineNumbers = source["showLineNumbers"];
 	        this.wordWrap = source["wordWrap"];
 	        this.spellCheck = source["spellCheck"];
+	        this.openInNewTab = source["openInNewTab"];
 	    }
 	}
 

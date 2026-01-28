@@ -5,6 +5,23 @@ All notable changes to MarkViewPro will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2026-01-28
+
+### Added
+- **Single Instance Mode**: App now uses single instance lock - opening a file when app is already running opens the file in the existing window as a new tab instead of launching a new window
+- **Open in New Tab Setting**: New setting to control file open behavior (default: enabled)
+  - When enabled, files opened from file explorer or command line open in new tab
+  - Setting available in Settings modal under "Open files in new tab"
+
+### Changed
+- Files associated with MarkViewPro now open in the existing instance instead of spawning new windows
+- Improved window focus behavior when opening files from external sources
+
+### Technical
+- Implemented Wails SingleInstanceLock with `OnSecondInstanceLaunch` callback
+- Added `openInNewTab` setting to backend and frontend
+- Added `open-file-from-instance` event handling for cross-instance communication
+
 ## [1.3.1] - 2026-01-26
 
 ### Added
@@ -347,6 +364,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite build system
 - Automated CI/CD pipeline with GitHub Actions
 
+[1.4.5]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.4.5
 [1.3.1]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.3.1
 [1.3.0]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.3.0
 [1.2.4]: https://github.com/OffLine911/MarkViewPro/releases/tag/v1.2.4

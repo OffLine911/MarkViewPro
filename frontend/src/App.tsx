@@ -115,6 +115,43 @@ export default function App() {
     loadInitialFile();
   }, [addTab]);
 
+  // Handle file opened from second instance (single instance lock)
+  useEffect(() => {
+    const handleOpenFromInstance = async (...args: unknown[]) => {
+      const filePath = args[0] as string;
+      if (!filePath) return;
+      
+      // Check if openInNewTab setting is enabled
+      if (settings.openInNewTab) {
+        // Check if file is already open in a tab
+        const existingTab = tabs.find(tab => tab.filePath === filePath);
+        if (existingTab) {
+          setActiveTabId(existingTab.id);
+          info('File is already open');
+          return;
+        }
+        
+        // Open file in new tab
+        const result = await wails.readFileByPath(filePath);
+        if (result) {
+          addTab(result.name, result.path, result.content);
+        }
+      } else {
+        // If not openInNewTab, the second instance shouldn't have been blocked
+        // But since we have single instance lock, we just open in a new tab anyway
+        const result = await wails.readFileByPath(filePath);
+        if (result) {
+          addTab(result.name, result.path, result.content);
+        }
+      }
+    };
+
+    wails.onEvent('open-file-from-instance', handleOpenFromInstance);
+    return () => {
+      wails.offEvent('open-file-from-instance');
+    };
+  }, [settings.openInNewTab, tabs, addTab, setActiveTabId, info]);
+
   // Load recent files on mount
   useEffect(() => {
     const loadRecentFiles = async () => {

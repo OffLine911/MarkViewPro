@@ -195,6 +195,19 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                 className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
               />
             </label>
+
+            <label className="flex items-center justify-between p-2.5 bg-zinc-800/50 rounded cursor-pointer hover:bg-zinc-800 transition-colors">
+              <div className="flex flex-col">
+                <span className="text-xs text-zinc-300">Open files in new tab</span>
+                <span className="text-[10px] text-zinc-500">When disabled, opens files in new window</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={settings.openInNewTab}
+                onChange={(e) => updateSettings({ openInNewTab: e.target.checked })}
+                className="w-4 h-4 text-cyan-500 bg-zinc-700 border-zinc-600 rounded focus:ring-cyan-500"
+              />
+            </label>
           </div>
         </div>
 

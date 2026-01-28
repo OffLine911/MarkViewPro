@@ -55,6 +55,7 @@ export interface BackendSettings {
   showLineNumbers: boolean;
   wordWrap: boolean;
   spellCheck: boolean;
+  openInNewTab: boolean;
 }
 
 export interface FileNode {
